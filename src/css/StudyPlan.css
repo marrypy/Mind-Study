@@ -1,0 +1,339 @@
+.study-plan {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1.5rem 0 3rem;
+}
+
+.plan-error {
+  background: rgba(220, 80, 80, 0.15);
+  border: 1px solid rgba(220, 80, 80, 0.4);
+  color: var(--text);
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.plan-info {
+  background: color-mix(in srgb, var(--accent-primary) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-primary) 35%, transparent);
+  color: var(--text);
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.plan-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.plan-technique-title {
+  font-size: 1.85rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem 0;
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.plan-technique-description {
+  color: var(--text);
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 0 0 0.5rem 0;
+}
+
+.plan-summary {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Two-column boxes */
+.plan-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.plan-box {
+  border-radius: 12px;
+  padding: 1.25rem 1.25rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+}
+
+.plan-box-considerations {
+  border-color: #22c55e;
+}
+
+.plan-box-deadlines {
+  border-color: #ef4444;
+}
+
+.plan-box-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem 0;
+}
+
+.plan-box-considerations .plan-box-title {
+  color: #22c55e;
+}
+
+.plan-box-deadlines .plan-box-title {
+  color: #ef4444;
+}
+
+.plan-box-list {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+  font-size: 0.9rem;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.plan-box-list li {
+  margin-bottom: 0.4rem;
+}
+
+.plan-box-list .deadline-label {
+  font-weight: 500;
+}
+
+.plan-box-list .deadline-tip {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.deadline-na {
+  color: var(--text-muted);
+}
+
+.plan-section {
+  margin-bottom: 1.5rem;
+}
+
+.plan-section-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 1rem 0;
+}
+
+/* Tips for Success */
+.tips-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.tip-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.tip-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 0.35rem 0;
+}
+
+.tip-card-desc {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Your Week at a Glance */
+.week-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1rem 1.25rem;
+}
+
+.week-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.week-row:last-child {
+  border-bottom: none;
+}
+
+.week-date {
+  font-size: 0.9rem;
+  color: var(--text);
+  flex-shrink: 0;
+}
+
+.week-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.week-pill {
+  background: var(--accent-gradient);
+  color: white;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.week-rest {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* Detailed Study Blocks */
+.block-day-group {
+  margin-bottom: 1.5rem;
+}
+
+.block-day-group:last-child {
+  margin-bottom: 0;
+}
+
+.block-day-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 0.15rem 0;
+}
+
+.block-day-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0 0 0.75rem 0;
+}
+
+.block-day-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.study-block-card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+}
+
+.study-block-card-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.study-block-time {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.25rem;
+}
+
+.study-block-subject {
+  display: block;
+  font-size: 0.95rem;
+  color: var(--text);
+  margin-bottom: 0.25rem;
+}
+
+.study-block-meta {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.study-block-priority {
+  flex-shrink: 0;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.study-block-priority-high {
+  background: #ef4444;
+  color: white;
+}
+
+.study-block-priority-medium {
+  background: #22c55e;
+  color: white;
+}
+
+.study-block-priority-low {
+  background: var(--text-muted);
+  color: white;
+}
+
+.fallback-blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.btn-back {
+  background: var(--bg-muted);
+  color: var(--text);
+  padding: 0.65rem 1.25rem;
+  font-size: 0.95rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.btn-back:hover {
+  background: var(--border);
+}
+
+.plan-footer {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .plan-two-col {
+    grid-template-columns: 1fr;
+  }
+  .tips-grid {
+    grid-template-columns: 1fr;
+  }
+  .week-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .week-pills {
+    justify-content: flex-start;
+  }
+}

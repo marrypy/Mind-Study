@@ -1,0 +1,117 @@
+:root {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Light theme – lime green to cyan */
+  --bg: #f0f7f4;
+  --bg-elevated: #ffffff;
+  --bg-muted: #e2ebe8;
+  --text: #1a2f2a;
+  --text-muted: #4a6b63;
+  --accent-primary: #22c55e;
+  --accent-lime: #84cc16;
+  --accent-cyan: #06b6d4;
+  --accent-gradient: linear-gradient(135deg, #84cc16 0%, #22c55e 50%, #06b6d4 100%);
+  --accent-green: #059669;
+  --border: #c5d9d2;
+  --shadow: rgba(34, 197, 94, 0.08);
+  --card-bg: #ffffff;
+  --input-bg: #ffffff;
+  --focus-ring: #22c55e;
+  --accent-green-soft: #4ade80;
+}
+
+.dark {
+  --bg: #0f0f0f;
+  --bg-elevated: #252525;
+  --bg-muted: #2d2d2d;
+  --text: #ffffff;
+  --text-muted: #a0a0a0;
+  --accent-primary: #4ade80;
+  --accent-lime: #a3e635;
+  --accent-cyan: #22d3ee;
+  --accent-gradient: linear-gradient(135deg, #a3e635 0%, #4ade80 50%, #22d3ee 100%);
+  --accent-green: #4ade80;
+  --border: #404040;
+  --shadow: rgba(0, 0, 0, 0.4);
+  --card-bg: #252525;
+  --input-bg: #2d2d2d;
+  --focus-ring: #4ade80;
+  --accent-green-soft: #4ade80;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  border-radius: 10px;
+  font-weight: 500;
+  transition: background 0.2s, transform 0.1s;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+input, textarea, select {
+  font-family: inherit;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--input-bg);
+  color: var(--text);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
+}
+
+.dark input:focus,
+.dark textarea:focus,
+.dark select:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.25);
+}
+
+a {
+  color: var(--accent-primary);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Gradient text utility */
+.text-gradient {
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}

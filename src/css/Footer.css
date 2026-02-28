@@ -1,0 +1,46 @@
+.app-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  flex-shrink: 0;
+  background: var(--bg);
+  border-top: 0px solid var(--border);
+  padding: 1.5rem 1rem;
+}
+
+.app-footer-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.app-footer-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-bottom: 0.35rem;
+}
+
+.app-footer-logo {
+  font-size: 1.1rem;
+}
+
+.app-footer-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.app-footer-tagline {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 0 0 0.5rem 0;
+}
+
+.app-footer-copy {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin: 0;
+}

@@ -1,0 +1,164 @@
+.app {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 6rem;
+}
+
+.app-header {
+  background: rgba(240, 247, 244, 0.72);
+  backdrop-filter: blur(12px) saturate(160%) brightness(1.1);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  border-bottom: 1px solid rgba(197, 217, 210, 0.5);
+  padding: 0.85rem 1.5rem;
+  flex-shrink: 0;
+  z-index: 10;
+  position: sticky;
+  top: 0;
+  box-shadow: none;
+}
+
+.dark .app-header {
+  background: rgba(15, 15, 15, 0.72);
+  border-bottom-color: rgba(64, 64, 64, 0.5);
+}
+
+.app-header--full .header-inner {
+  max-width: none;
+}
+
+.app-body {
+  display: flex;
+  flex: 1;
+}
+
+.app-main {
+  flex: 1;
+  min-width: 0;
+  padding: 0 3rem 4rem 2rem;
+  display: flex;
+  justify-content: center;
+*}
+
+.app-main-inner {
+  width: 100%;
+  max-width: 960px;
+}
+
+.header-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.logo-button {
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+}
+
+.logo-button:hover {
+  opacity: 0.9;
+}
+
+.logo {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.logo-subtitle {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin: 0;
+  margin-left: 1.85rem;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.header-user {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.btn-header {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.btn-header:hover {
+  color: var(--text);
+  background: var(--bg-muted);
+}
+
+.btn-header--primary {
+  background: var(--accent-gradient);
+  color: white;
+  border: none;
+}
+
+.btn-header--primary:hover {
+  filter: brightness(1.1);
+}
+
+.btn-header--link {
+  border: none;
+}
+
+.btn-header--link:hover {
+  background: transparent;
+  text-decoration: underline;
+}
+
+.plan-loading,
+.plan-empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--text-muted);
+}
+
+.plan-empty p {
+  margin: 0 0 1rem 0;
+}
+
+.plan-empty .btn-header {
+  padding: 0.6rem 1rem;
+}
+
+.tagline {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  max-width: 480px;
+  margin: 1.25rem auto 0;
+  line-height: 1.5;
+}

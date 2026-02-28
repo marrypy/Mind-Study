@@ -1,0 +1,139 @@
+.plan-list {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 2rem 1rem 3rem;
+}
+
+.plan-list-loading,
+.plan-list-error {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 2rem;
+}
+
+.plan-list-error {
+  color: var(--error, #dc2626);
+}
+
+.plan-list-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 0.35rem 0;
+  text-align: center;
+}
+
+.plan-list-subtitle {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  margin: 0 0 1.5rem 0;
+  text-align: center;
+}
+
+.plan-list-ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.plan-list-week-li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.plan-list-week-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  min-width: 0;
+  padding: 1rem 1.25rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text);
+  font-size: 1rem;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.plan-list-week-card:hover {
+  border-color: var(--accent-lime);
+  background: var(--card-bg-hover, color-mix(in srgb, var(--accent-lime) 8%, transparent));
+}
+
+.plan-list-week-label {
+  font-weight: 500;
+}
+
+.plan-list-week-delete {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text-muted);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.plan-list-week-delete:hover:not(:disabled) {
+  color: #dc2626;
+  border-color: rgba(220, 38, 38, 0.4);
+}
+
+.plan-list-week-delete:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.plan-list-empty {
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+.plan-list-empty p {
+  color: var(--text-muted);
+  margin: 0 0 1rem 0;
+}
+
+.plan-list-btn-primary {
+  padding: 0.6rem 1.25rem;
+  background: var(--accent-gradient);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.plan-list-btn-primary:hover {
+  filter: brightness(1.08);
+}
+
+.plan-list-create-wrap {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.plan-list-btn-secondary {
+  padding: 0.5rem 1rem;
+  background: transparent;
+  color: var(--accent-lime);
+  border: 1px solid var(--accent-lime);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.plan-list-btn-secondary:hover {
+  background: color-mix(in srgb, var(--accent-lime) 12%, transparent);
+}
