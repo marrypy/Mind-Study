@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ThemeProvider } from './context/ThemeContext.jsx';
 import { AuthProvider, useAuth } from './context/AuthContext.jsx';
 import ThemeToggle from './components/ThemeToggle.jsx';
@@ -31,6 +31,26 @@ function AppContent() {
   const [cameFromPlanList, setCameFromPlanList] = useState(false);
   const [saveError, setSaveError] = useState(null);
   const [selectedFolderId, setSelectedFolderId] = useState(null);
+  const [headerHidden, setHeaderHidden] = useState(false);
+  const lastScrollY = useRef(0);
+
+  // Header: hide on scroll down, show on scroll up or at top
+  useEffect(() => {
+    const SCROLL_THRESHOLD = 60;
+    function onScroll() {
+      const y = window.scrollY ?? document.documentElement.scrollTop;
+      if (y <= SCROLL_THRESHOLD) {
+        setHeaderHidden(false);
+      } else if (y > lastScrollY.current) {
+        setHeaderHidden(true);
+      } else {
+        setHeaderHidden(false);
+      }
+      lastScrollY.current = y;
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   // When logged in and on plan view with no plan (and not from list), try to load latest saved plan
   useEffect(() => {
@@ -156,7 +176,7 @@ function AppContent() {
 
   return (
     <div className="app">
-      <header className="app-header app-header--full">
+      <header className={`app-header app-header--full${headerHidden ? ' app-header--hidden' : ''}`}>
         <div className="header-inner">
           <button
             type="button"
@@ -164,7 +184,7 @@ function AppContent() {
             onClick={() => setView('landing')}
             aria-label="Go to home"
           >
-            <h1 className="logo">Mind Study</h1>
+            <h1 className="logo">MindStudy AI</h1>
             <p className="logo-subtitle">AI-Powered Study Planning</p>
           </button>
           <div className="header-actions">
@@ -287,7 +307,11 @@ function AppContent() {
         onClose={() => setAuthModalOpen(false)}
         defaultTab={authModalTab}
       />
-      <ChatBot />
+      <ChatBot
+        isLoggedIn={isLoggedIn}
+        onOpenSignUp={openSignUp}
+        onOpenLogIn={openLogIn}
+      />
     </div>
   );
 }

@@ -161,53 +161,7 @@
   margin: 0;
 }
 
-/* Your Week at a Glance */
-.week-card {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 1rem 1.25rem;
-}
-
-.week-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.65rem 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.week-row:last-child {
-  border-bottom: none;
-}
-
-.week-date {
-  font-size: 0.9rem;
-  color: var(--text);
-  flex-shrink: 0;
-}
-
-.week-pills {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  justify-content: flex-end;
-}
-
-.week-pill {
-  background: var(--accent-gradient);
-  color: white;
-  padding: 0.35rem 0.75rem;
-  border-radius: 999px;
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
-.week-rest {
-  font-size: 0.9rem;
-  color: var(--text-muted);
-}
+/* Your Week at a Glance uses shared .timeline-* styles from index.css */
 
 /* Detailed Study Blocks */
 .block-day-group {
@@ -328,12 +282,5 @@
   }
   .tips-grid {
     grid-template-columns: 1fr;
-  }
-  .week-row {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .week-pills {
-    justify-content: flex-start;
   }
 }

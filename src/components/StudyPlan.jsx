@@ -177,22 +177,37 @@ export default function StudyPlan({ plan, onBack, error, saveError }) {
         <h2 className="plan-section-heading">
           Your Week at a Glance
         </h2>
-        <div className="week-card">
-          {weekDates.map(({ day, date }) => {
+        <div className="timeline-track">
+          <div className="timeline-line" aria-hidden />
+          {weekDates.map(({ day, date }, index) => {
             const entries = timelineByDay[day] || [];
+            const isLeft = index % 2 === 0;
+            const cardContent = (
+              <div className="timeline-card">
+                <span className="timeline-card-date">{formatDateLong(date, day)}</span>
+                <span className={`timeline-card-tag ${entries.length > 0 ? 'timeline-card-tag--study' : 'timeline-card-tag--rest'}`}>
+                  {entries.length > 0 ? 'STUDY' : 'REST'}
+                </span>
+                <p className="timeline-card-desc">
+                  {entries.length > 0
+                    ? entries
+                        .map((e) => {
+                          const { subject } = parseActivity(e.activity);
+                          return `${subject || e.activity} at ${e.time}`;
+                        })
+                        .join(' · ')
+                    : 'No scheduled activities'}
+                </p>
+              </div>
+            );
             return (
-              <div key={day} className="week-row">
-                <span className="week-date">{formatDateLong(date, day)}</span>
-                <div className="week-pills">
-                  {entries.length > 0 ? (
-                    entries.map((e, j) => (
-                      <span key={j} className="week-pill">
-                        {parseActivity(e.activity).subject || e.activity} • {e.time}
-                      </span>
-                    ))
-                  ) : (
-                    <span className="week-rest">Rest day</span>
-                  )}
+              <div key={day} className="timeline-item">
+                <div className={`timeline-item-content timeline-item-content--${isLeft ? 'left' : 'right'}`}>
+                  {isLeft ? cardContent : null}
+                </div>
+                <div className="timeline-item-node" aria-hidden />
+                <div className={`timeline-item-content timeline-item-content--${isLeft ? 'right' : 'left'}`}>
+                  {isLeft ? null : cardContent}
                 </div>
               </div>
             );

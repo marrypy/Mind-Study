@@ -97,14 +97,16 @@
   font-size: 0.85rem;
   background: transparent;
   color: var(--accent-lime);
-  border: 1px solid var(--accent-lime);
+  background: linear-gradient(var(--card-bg), var(--card-bg)) padding-box, var(--accent-gradient) border-box;
+  border: 1px solid transparent;
   border-radius: 8px;
   cursor: pointer;
   margin-top: 0.35rem;
+  box-shadow: 0 2px 8px rgba(132, 204, 22, 0.1), 0 2px 8px rgba(6, 182, 212, 0.08);
 }
 
 .auth-modal-resend:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--accent-lime) 15%, transparent);
+  background: linear-gradient(color-mix(in srgb, var(--accent-lime) 15%, transparent), color-mix(in srgb, var(--accent-lime) 15%, transparent)) padding-box, var(--accent-gradient) border-box;
 }
 
 .auth-modal-resend:disabled {

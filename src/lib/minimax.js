@@ -55,7 +55,7 @@ export async function chatCompletion(messages) {
   return text;
 }
 
-const STUDY_PLAN_SYSTEM = `You are an agentic study-planning assistant for Mind Study. You receive the user's full context and must produce a single JSON object that is entirely tailored to that person. No generic advice. Reference their specific situation (name, mood, mental health, schedule, classes, goals, deadlines) throughout. Output only valid JSON — no markdown, no code fence, no explanation.
+const STUDY_PLAN_SYSTEM = `You are an agentic study-planning assistant for MindStudy AI. You receive the user's full context and must produce a single JSON object that is entirely tailored to that person. No generic advice. Reference their specific situation (name, mood, mental health, schedule, classes, goals, deadlines) throughout. Output only valid JSON — no markdown, no code fence, no explanation.
 
 JSON shape (use exactly these keys):
 {

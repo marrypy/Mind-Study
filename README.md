@@ -1,4 +1,4 @@
-# Mind Study
+# MindStudy AI
 
 An AI-ready study planner that adapts to your mood, circumstances (ADHD, mental health, sickness, weekly plans), and goals. Get a tailored study plan with suggested blocks, deadline timing, and optional medication reminders.
 

@@ -31,6 +31,11 @@ function formatDateShort(d) {
   return `${months[d.getMonth()]} ${d.getDate()}`;
 }
 
+function formatDateLong(d) {
+  const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  return `${months[d.getMonth()]} ${d.getDate()} ${d.getFullYear()}`;
+}
+
 function parseActivity(activity) {
   if (!activity) return { subject: 'Study', duration: '' };
   const match = String(activity).match(/^(.+?)\s*[•·\-]\s*(\d+)\s*min\)?$|^(.+?)\s*\((\d+)\s*min\)$/);
@@ -62,7 +67,7 @@ const RECENTLY_ADDED_ITEMS = [
   'Mood & wellness in planning',
 ];
 
-const TYPEWRITER_FULL = 'Mind Study';
+const TYPEWRITER_FULL = 'The first wellness-centered study platform';
 const TYPEWRITER_SPEED_MS = 120;
 const TYPEWRITER_CURSOR_BLINK_MS = 530;
 
@@ -117,11 +122,25 @@ function TypewriterTitle() {
   );
 }
 
+const AURA_FADE_DISTANCE = 420;
+
 export default function Landing({ onGetStarted, onGeneratePlan, onGenerateClassFolder, onOpenFolder, onOpenPlan }) {
   const { user, isLoggedIn } = useAuth();
   const [folders, setFolders] = useState([]);
   const [plans, setPlans] = useState([]);
   const [plansLoading, setPlansLoading] = useState(false);
+  const [auraOpacity, setAuraOpacity] = useState(1);
+
+  useEffect(() => {
+    function onScroll() {
+      const y = window.scrollY ?? document.documentElement.scrollTop;
+      const opacity = Math.max(0, 1 - y / AURA_FADE_DISTANCE);
+      setAuraOpacity(opacity);
+    }
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   useEffect(() => {
     if (!isLoggedIn || !user?.id) return;
@@ -161,9 +180,10 @@ export default function Landing({ onGetStarted, onGeneratePlan, onGenerateClassF
           top: '6rem',
           position: 'relative',
         }}>
-        <h1 className="landing-title text-gradient" >Mind Study</h1>
+        <div className="landing-aura" style={{ opacity: auraOpacity }} aria-hidden />
+        <h1 className="landing-title text-gradient" >MindStudy AI</h1>
         <p className="landing-description">
-          Study with ease using integrated flashcards, AI-powered study plans, study guides from your materials, and lecture recordings while taking advantage of AI powered study plans based on your mood, health, and time commitments.
+          Study with ease using integrated flashcards, study guides from your materials, and lecture recordings while taking advantage of AI powered study plans based on your mood, health, and time commitments.
         </p>
 
         <div className="landing-logged-in-actions">
@@ -221,23 +241,46 @@ export default function Landing({ onGetStarted, onGeneratePlan, onGenerateClassF
           {plans.length === 0 || !latestPlan ? (
             <p className="landing-review-empty">No plan yet. Generate a plan to see your week.</p>
           ) : (
-            <div className="landing-timeline-week">
-              {weekDates.map(({ day, date }) => {
+            <div className="timeline-track">
+              <div className="timeline-line" aria-hidden />
+              {weekDates.map(({ day, date }, index) => {
                 const entries = timelineByDay[day] || [];
+                const isLeft = index % 2 === 0;
+                const cardContent = (
+                  <div className="timeline-card">
+                    <span className="timeline-card-date">{formatDateLong(date)}</span>
+                    <span className={`timeline-card-tag ${entries.length > 0 ? 'timeline-card-tag--study' : 'timeline-card-tag--rest'}`}>
+                      {entries.length > 0 ? 'STUDY' : 'REST'}
+                    </span>
+                    <p className="timeline-card-desc">
+                      {entries.length > 0
+                        ? entries
+                            .map((e) => {
+                              const { subject } = parseActivity(e.activity);
+                              return `${subject || e.activity} at ${e.time}`;
+                            })
+                            .join(' · ')
+                        : 'No scheduled activities'}
+                    </p>
+                    {onOpenPlan && plans[0] && (
+                      <button
+                        type="button"
+                        className="timeline-card-link"
+                        onClick={() => onOpenPlan(plans[0])}
+                      >
+                        View plan →
+                      </button>
+                    )}
+                  </div>
+                );
                 return (
-                  <div key={day} className="landing-timeline-day">
-                    <span className="landing-timeline-day-name">{day}</span>
-                    <span className="landing-timeline-day-date">{formatDateShort(date)}</span>
-                    <div className="landing-timeline-pills">
-                      {entries.length > 0 ? (
-                        entries.map((e, j) => (
-                          <span key={j} className="landing-timeline-pill">
-                            {parseActivity(e.activity).subject || e.activity} • {e.time}
-                          </span>
-                        ))
-                      ) : (
-                        <span className="landing-timeline-rest">Rest day</span>
-                      )}
+                  <div key={day} className="timeline-item">
+                    <div className={`timeline-item-content timeline-item-content--${isLeft ? 'left' : 'right'}`}>
+                      {isLeft ? cardContent : null}
+                    </div>
+                    <div className="timeline-item-node" aria-hidden />
+                    <div className={`timeline-item-content timeline-item-content--${isLeft ? 'right' : 'left'}`}>
+                      {isLeft ? null : cardContent}
                     </div>
                   </div>
                 );
@@ -253,20 +296,13 @@ export default function Landing({ onGetStarted, onGeneratePlan, onGenerateClassF
 
   return (
     <div className="landing landing--guest">
+      <div className="landing-aura" style={{ opacity: auraOpacity }} aria-hidden />
       <FadeInOnScroll as="div" className="landing-hero">
         <div className="landing-glow" aria-hidden />
         <TypewriterTitle />
         <p className="landing-description">
-          Study with ease using integrated flashcards, AI-powered study plans, study guides from your materials, and lecture recordings while taking advantage of AI powered study plans based on your mood, health, and time commitments.
+          Study with ease using integrated flashcards, study guides from your materials, and lecture recordings while taking advantage of AI powered study plans based on your mood, health, and time commitments.
         </p>
-        <div className="landing-hero-actions">
-          <button type="button" className="landing-cta" onClick={onGetStarted}>
-            Get Started Free
-          </button>
-          <p className="landing-disclaimer">
-            No signup required • Takes 2 minutes • Your data stays private.
-          </p>
-        </div>
       </FadeInOnScroll>
 
       <FadeInOnScroll as="section" className="landing-section" aria-labelledby="how-it-works-heading" id="hiw">
@@ -293,12 +329,39 @@ export default function Landing({ onGetStarted, onGeneratePlan, onGenerateClassF
             </ul>
           </div>
           <div className="landing-compare-card landing-compare-mindstudy">
-            <h3 className="landing-compare-card-title">Mind Study</h3>
+            <h3 className="landing-compare-card-title">MindStudy AI</h3>
             <ul className="landing-compare-list">
               {MIND_STUDY_ITEMS.map((item) => (
                 <li key={item}>{item}</li>
               ))}
             </ul>
+          </div>
+        </div>
+      </FadeInOnScroll>
+
+      <FadeInOnScroll as="section" className="landing-section landing-section-getting-started" aria-labelledby="getting-started-heading" id="getting-started">
+        <h2 id="getting-started-heading" className="landing-section-title">Getting Started</h2>
+        <div className="landing-steps">
+          <div className="landing-step">
+            <span className="landing-step-num">1</span>
+            <div className="landing-step-content">
+              <h3 className="landing-step-title">Create an account</h3>
+              <p className="landing-step-desc">Sign up to save your plans and sync across devices. Your data stays private.</p>
+            </div>
+          </div>
+          <div className="landing-step">
+            <span className="landing-step-num">2</span>
+            <div className="landing-step-content">
+              <h3 className="landing-step-title">Fill in the quick form</h3>
+              <p className="landing-step-desc">Share your mood, goals, schedule, and any deadlines so we can tailor your plan.</p>
+            </div>
+          </div>
+          <div className="landing-step">
+            <span className="landing-step-num">3</span>
+            <div className="landing-step-content">
+              <h3 className="landing-step-title">Get your AI study plan and start studying</h3>
+              <p className="landing-step-desc">Receive a personalized weekly plan and use flashcards, study guides, and the timer to stay on track.</p>
+            </div>
           </div>
         </div>
       </FadeInOnScroll>
@@ -309,7 +372,7 @@ export default function Landing({ onGetStarted, onGeneratePlan, onGenerateClassF
           Get Started Free
         </button>
         <p className="landing-disclaimer">
-          No signup required • Takes 2 minutes • Your data stays private.
+         Takes up to 2 minutes • Your data stays private.
         </p>
       </FadeInOnScroll>
 

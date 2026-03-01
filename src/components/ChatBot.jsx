@@ -2,12 +2,12 @@ import { useState, useRef, useEffect } from 'react';
 import { chatCompletion } from '../lib/minimax.js';
 import '../css/ChatBot.css';
 
-const CHAT_SYSTEM = 'You are a friendly study and productivity assistant for Mind Study. You help users with study planning, focus, deadlines, and well-being. Keep replies concise and practical.';
+const CHAT_SYSTEM = 'You are a friendly study and productivity assistant for MindStudy AI. You help users with study planning, focus, deadlines, and well-being. Keep replies concise and practical.';
 
-export default function ChatBot() {
+export default function ChatBot({ isLoggedIn = true, onOpenSignUp, onOpenLogIn }) {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { role: 'assistant', content: "Hi! I'm your Mind Study assistant. Ask me about planning, focus, or your study plan." },
+    { role: 'assistant', content: "Hi! I'm your MindStudy AI assistant. Ask me about planning, focus, or your study plan." },
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -66,32 +66,49 @@ export default function ChatBot() {
       {open && (
         <div className="chatbot-panel">
           <div className="chatbot-header">
-            <span>Mind Study Assistant</span>
+            <span>MindStudy AI Assistant</span>
           </div>
-          <div className="chatbot-messages" ref={listRef}>
-            {messages.map((msg, i) => (
-              <div key={i} className={`chatbot-msg chatbot-msg--${msg.role}`}>
-                {msg.content}
-              </div>
-            ))}
-            {loading && (
-              <div className="chatbot-msg chatbot-msg--assistant chatbot-msg--loading">
-                …
+          <div className="chatbot-body">
+            <div className="chatbot-messages" ref={listRef}>
+              {messages.map((msg, i) => (
+                <div key={i} className={`chatbot-msg chatbot-msg--${msg.role}`}>
+                  {msg.content}
+                </div>
+              ))}
+              {loading && (
+                <div className="chatbot-msg chatbot-msg--assistant chatbot-msg--loading">
+                  …
+                </div>
+              )}
+            </div>
+            <form className="chatbot-form" onSubmit={handleSend}>
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Ask anything…"
+                disabled={loading}
+              />
+              <button type="submit" disabled={loading || !input.trim()}>
+                Send
+              </button>
+            </form>
+            {!isLoggedIn && (
+              <div className="chatbot-login-overlay" aria-hidden>
+                <div className="chatbot-login-gate">
+                  <p className="chatbot-login-text">Log in or sign up to chat with the assistant.</p>
+                  <div className="chatbot-login-actions">
+                    <button type="button" className="chatbot-login-btn chatbot-login-btn--primary" onClick={onOpenSignUp}>
+                      Sign up
+                    </button>
+                    <button type="button" className="chatbot-login-btn chatbot-login-btn--secondary" onClick={onOpenLogIn}>
+                      Log in
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
           </div>
-          <form className="chatbot-form" onSubmit={handleSend}>
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask anything…"
-              disabled={loading}
-            />
-            <button type="submit" disabled={loading || !input.trim()}>
-              Send
-            </button>
-          </form>
         </div>
       )}
     </>
