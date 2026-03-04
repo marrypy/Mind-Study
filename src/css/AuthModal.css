@@ -144,3 +144,25 @@
   opacity: 0.7;
   cursor: not-allowed;
 }
+
+.auth-modal-terms {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+.auth-modal-terms input[type="checkbox"] {
+  margin-top: 0.15rem;
+}
+
+.auth-modal-terms a {
+  color: var(--accent-lime);
+  text-decoration: none;
+}
+
+.auth-modal-terms a:hover {
+  text-decoration: underline;
+}

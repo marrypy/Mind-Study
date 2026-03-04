@@ -7,7 +7,19 @@ const GOOGLE_API_KEY = import.meta.env.VITE_GOOGLE_API_KEY || '';
 
 const MOOD_OPTIONS = ['Great', 'Good', 'Okay', 'Low', 'Anxious', 'Overwhelmed', 'Sick'];
 
+const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+function getDefaultTestDate() {
+  const d = new Date();
+  return {
+    month: d.getMonth() + 1,
+    day: Math.min(28, d.getDate()),
+    year: d.getFullYear(),
+  };
+}
+
 const ALL_STEPS = [
+  { id: 'planType', title: 'What type of plan do you want?' },
   { id: 'name', title: "First, what's your name?" },
   { id: 'mood', title: "How's your mood today?" },
   { id: 'circumstances', title: 'Anything affecting your focus or energy?' },
@@ -15,12 +27,110 @@ const ALL_STEPS = [
   { id: 'week', title: "What's going on this week?" },
   { id: 'classes', title: 'What do you want to study?' },
   { id: 'goals', title: 'What are your goals?' },
+  { id: 'confidence', title: 'How confident are you? (1–10)' },
   { id: 'deadlines', title: 'Any deadlines?' },
   { id: 'extra', title: 'Anything else we should know?' },
   { id: 'account', title: 'Save your plan to an account?' },
 ];
 
-function StepContent({ stepId, name, setName, mood, setMood, circumstances, setCircumstances, sickness, setSickness, mentalHealth, setMentalHealth, weekPlans, setWeekPlans, weekCalendarLoading, weekCalendarError, onImportWeekFromCalendar, classes, setClasses, goals, setGoals, deadlines, setDeadlines, extra, setExtra, isLoggedIn, onOpenSignUp, onOpenLogIn }) {
+function StepContent({
+  stepId,
+  planType,
+  setPlanType,
+  confidence,
+  setConfidence,
+  testDateMonth,
+  setTestDateMonth,
+  testDateDay,
+  setTestDateDay,
+  testDateYear,
+  setTestDateYear,
+  name,
+  setName,
+  mood,
+  setMood,
+  circumstances,
+  setCircumstances,
+  sickness,
+  setSickness,
+  mentalHealth,
+  setMentalHealth,
+  weekPlans,
+  setWeekPlans,
+  weekCalendarLoading,
+  weekCalendarError,
+  onImportWeekFromCalendar,
+  classes,
+  setClasses,
+  goals,
+  setGoals,
+  deadlines,
+  setDeadlines,
+  extra,
+  setExtra,
+  isLoggedIn,
+  onOpenSignUp,
+  onOpenLogIn,
+  isPro,
+  onOpenPricing,
+}) {
+  if (stepId === 'planType') {
+    return (
+      <div className="wizard-field wizard-plan-type">
+        <div className="wizard-plan-type-options">
+          <button
+            type="button"
+            className={`wizard-plan-type-btn ${planType === 'weekly' ? 'wizard-plan-type-btn--active' : ''}`}
+            onClick={() => setPlanType('weekly')}
+          >
+            Weekly plan
+          </button>
+          <button
+            type="button"
+            className={`wizard-plan-type-btn ${planType === 'test' ? 'wizard-plan-type-btn--active' : ''}`}
+            onClick={() => {
+              if (!isPro) {
+                if (onOpenPricing) onOpenPricing();
+                return;
+              }
+              setPlanType('test');
+            }}
+          >
+            Test-based study plan
+            {!isPro && <span className="wizard-plan-type-pill">Pro</span>}
+          </button>
+        </div>
+        <p className="wizard-plan-type-hint">
+          {planType === 'weekly' ? 'A 7-day study schedule tailored to your week.' : 'A plan from today until your test date.'}
+        </p>
+        {!isPro && (
+          <p className="wizard-plan-type-note">
+            Test-based timelines from today to exam day are included in <strong>Pro</strong>.
+          </p>
+        )}
+      </div>
+    );
+  }
+  if (stepId === 'confidence') {
+    return (
+      <div className="wizard-field wizard-confidence">
+        <p className="wizard-confidence-hint">1 = not confident at all, 10 = very confident</p>
+        <div className="wizard-confidence-scale">
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
+            <button
+              key={n}
+              type="button"
+              className={`wizard-confidence-btn ${confidence === n ? 'wizard-confidence-btn--active' : ''}`}
+              onClick={() => setConfidence(n)}
+            >
+              {n}
+            </button>
+          ))}
+        </div>
+        <p className="wizard-confidence-value">Selected: {confidence}/10</p>
+      </div>
+    );
+  }
   if (stepId === 'name') {
     return (
       <div className="wizard-field">
@@ -109,11 +219,65 @@ function StepContent({ stepId, name, setName, mood, setMood, circumstances, setC
     );
   }
   if (stepId === 'deadlines') {
+    const isTestPlan = planType === 'test';
+    if (isTestPlan) {
+      return (
+        <div className="wizard-field wizard-test-date">
+          <span className="wizard-test-date-heading">When is your test date?</span>
+          <div className="wizard-test-date-dropdowns">
+            <label className="wizard-test-date-label">
+              <span>Month</span>
+              <select
+                value={testDateMonth}
+                onChange={(e) => setTestDateMonth(Number(e.target.value))}
+                className="wizard-select"
+              >
+                {MONTH_NAMES.map((name, i) => (
+                  <option key={name} value={i + 1}>{name}</option>
+                ))}
+              </select>
+            </label>
+            <label className="wizard-test-date-label">
+              <span>Day</span>
+              <select
+                value={testDateDay}
+                onChange={(e) => setTestDateDay(Number(e.target.value))}
+                className="wizard-select"
+              >
+                {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
+                  <option key={d} value={d}>{d}</option>
+                ))}
+              </select>
+            </label>
+            <label className="wizard-test-date-label">
+              <span>Year</span>
+              <select
+                value={testDateYear}
+                onChange={(e) => setTestDateYear(Number(e.target.value))}
+                className="wizard-select"
+              >
+                {(() => {
+                  const y = new Date().getFullYear();
+                  return Array.from({ length: 4 }, (_, i) => y + i);
+                })().map((y) => (
+                  <option key={y} value={y}>{y}</option>
+                ))}
+              </select>
+            </label>
+          </div>
+        </div>
+      );
+    }
     return (
       <div className="wizard-field">
         <label>
           <span>Deadlines</span>
-          <textarea value={deadlines} onChange={(e) => setDeadlines(e.target.value)} placeholder="e.g. Essay due Fri 5pm, quiz Wed 10am…" rows={3} />
+          <textarea
+            value={deadlines}
+            onChange={(e) => setDeadlines(e.target.value)}
+            placeholder="e.g. Essay due Fri 5pm, quiz Wed 10am…"
+            rows={3}
+          />
         </label>
       </div>
     );
@@ -139,9 +303,11 @@ function StepContent({ stepId, name, setName, mood, setMood, circumstances, setC
   return null;
 }
 
-export default function OnboardingWizard({ onSubmit, onBack, isLoading, onOpenSignUp, onOpenLogIn, isLoggedIn }) {
+export default function OnboardingWizard({ onSubmit, onBack, isLoading, onOpenSignUp, onOpenLogIn, isLoggedIn, isPro, onOpenPricing }) {
   const steps = isLoggedIn ? ALL_STEPS.filter((s) => s.id !== 'account' && s.id !== 'name') : ALL_STEPS;
   const [stepIndex, setStepIndex] = useState(0);
+  const [planType, setPlanType] = useState('weekly');
+  const [confidence, setConfidence] = useState(5);
   const [name, setName] = useState('');
   const [mood, setMood] = useState('');
   const [circumstances, setCircumstances] = useState('');
@@ -151,6 +317,10 @@ export default function OnboardingWizard({ onSubmit, onBack, isLoading, onOpenSi
   const [classes, setClasses] = useState('');
   const [goals, setGoals] = useState('');
   const [deadlines, setDeadlines] = useState('');
+  const defaultTest = getDefaultTestDate();
+  const [testDateMonth, setTestDateMonth] = useState(defaultTest.month);
+  const [testDateDay, setTestDateDay] = useState(defaultTest.day);
+  const [testDateYear, setTestDateYear] = useState(defaultTest.year);
   const [extra, setExtra] = useState('');
   const [weekCalendarLoading, setWeekCalendarLoading] = useState(false);
   const [weekCalendarError, setWeekCalendarError] = useState(null);
@@ -181,6 +351,12 @@ export default function OnboardingWizard({ onSubmit, onBack, isLoading, onOpenSi
   const showLongForm = isLoggedIn;
 
   function getContext() {
+    const deadlinesValue = planType === 'test'
+      ? `${MONTH_NAMES[testDateMonth - 1]} ${testDateDay}, ${testDateYear}`
+      : deadlines;
+    const testDateISO = planType === 'test'
+      ? `${testDateYear}-${String(testDateMonth).padStart(2, '0')}-${String(testDateDay).padStart(2, '0')}`
+      : undefined;
     return {
       name: name.trim(),
       mood,
@@ -190,8 +366,11 @@ export default function OnboardingWizard({ onSubmit, onBack, isLoading, onOpenSi
       weekPlans,
       classes,
       goals,
-      deadlines,
+      deadlines: deadlinesValue,
       extra: extra.trim(),
+      planType,
+      confidence,
+      testDateISO,
     };
   }
 
@@ -218,11 +397,44 @@ export default function OnboardingWizard({ onSubmit, onBack, isLoading, onOpenSi
   }
 
   const stepContentProps = {
-    name, setName, mood, setMood, circumstances, setCircumstances, sickness, setSickness,
-    mentalHealth, setMentalHealth, weekPlans, setWeekPlans,
-    weekCalendarLoading, weekCalendarError, onImportWeekFromCalendar: handleImportWeekFromCalendar,
-    classes, setClasses, goals, setGoals, deadlines, setDeadlines, extra, setExtra,
-    isLoggedIn, onOpenSignUp, onOpenLogIn,
+    planType,
+    setPlanType,
+    confidence,
+    setConfidence,
+    testDateMonth,
+    setTestDateMonth,
+    testDateDay,
+    setTestDateDay,
+    testDateYear,
+    setTestDateYear,
+    name,
+    setName,
+    mood,
+    setMood,
+    circumstances,
+    setCircumstances,
+    sickness,
+    setSickness,
+    mentalHealth,
+    setMentalHealth,
+    weekPlans,
+    setWeekPlans,
+    weekCalendarLoading,
+    weekCalendarError,
+    onImportWeekFromCalendar: handleImportWeekFromCalendar,
+    classes,
+    setClasses,
+    goals,
+    setGoals,
+    deadlines,
+    setDeadlines,
+    extra,
+    setExtra,
+    isLoggedIn,
+    onOpenSignUp,
+    onOpenLogIn,
+    isPro,
+    onOpenPricing,
   };
 
   if (showLongForm) {
@@ -233,7 +445,9 @@ export default function OnboardingWizard({ onSubmit, onBack, isLoading, onOpenSi
           <p className="wizard-long-hint">Fill in the sections below. Your plan will be saved to your account.</p>
           {steps.map((s) => (
             <div key={s.id} className="wizard-long-card">
-              <h3 className="wizard-question">{s.title}</h3>
+              <h3 className="wizard-question">
+                {s.id === 'deadlines' && planType === 'test' ? 'When is your test?' : s.title}
+              </h3>
               <StepContent stepId={s.id} {...stepContentProps} />
             </div>
           ))}
@@ -257,7 +471,9 @@ export default function OnboardingWizard({ onSubmit, onBack, isLoading, onOpenSi
       </div>
 
       <form className="wizard-form" onSubmit={handleNext}>
-        <h2 className="wizard-question">{step.title}</h2>
+        <h2 className="wizard-question">
+          {step.id === 'deadlines' && planType === 'test' ? 'When is your test?' : step.title}
+        </h2>
         <StepContent stepId={step.id} {...stepContentProps} />
         <div className="wizard-actions">
           <button type="button" className="btn-secondary" onClick={handleBack}>

@@ -118,3 +118,15 @@ export function getWeekOfMondayLabel(date) {
   const suffix = dayNum === 1 || dayNum === 21 || dayNum === 31 ? 'st' : dayNum === 2 || dayNum === 22 ? 'nd' : dayNum === 3 || dayNum === 23 ? 'rd' : 'th';
   return `Week of Monday, ${months[monday.getMonth()]} ${dayNum}${suffix}, ${monday.getFullYear()}`;
 }
+
+/**
+ * Get display label for a plan row (saved plan with plan + created_at).
+ * Uses plan.title for test plans (e.g. "March 15, 2025 test"), else week-of-Monday label.
+ * @param {{ plan?: { title?: string }, created_at: string }} row
+ * @returns {string}
+ */
+export function getPlanLabel(row) {
+  const title = row?.plan?.title;
+  if (title != null && String(title).trim()) return String(title).trim();
+  return getWeekOfMondayLabel(row?.created_at ?? new Date());
+}

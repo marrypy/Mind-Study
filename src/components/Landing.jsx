@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { loadStudyData } from '../lib/studyStorage.js';
-import { getAllStudyPlans, getWeekOfMondayLabel } from '../lib/studyPlans.js';
+import { getAllStudyPlans, getPlanLabel } from '../lib/studyPlans.js';
 import '../css/Landing.css';
 
 const DAY_ORDER = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -36,6 +36,12 @@ function formatDateLong(d) {
   return `${months[d.getMonth()]} ${d.getDate()} ${d.getFullYear()}`;
 }
 
+function formatDateFromISO(dateStr) {
+  if (!dateStr || typeof dateStr !== 'string') return '';
+  const d = new Date(dateStr + 'T12:00:00');
+  return Number.isNaN(d.getTime()) ? dateStr : formatDateLong(d);
+}
+
 function parseActivity(activity) {
   if (!activity) return { subject: 'Study', duration: '' };
   const match = String(activity).match(/^(.+?)\s*[•·\-]\s*(\d+)\s*min\)?$|^(.+?)\s*\((\d+)\s*min\)$/);
@@ -59,16 +65,8 @@ const HOW_IT_WORKS = [
 const OTHERS_ITEMS = ['Manual flashcards', 'Manual study guides', 'Lack of study guidance', 'Time consuming'];
 const MIND_STUDY_ITEMS = ['AI generated flashcards', 'AI generated study guides', 'Guidance on study techniques', 'Time saver'];
 
-const RECENTLY_ADDED_ITEMS = [
-  'AI-powered study plans',
-  'Integrated flashcards',
-  'Study guides from your materials',
-  'Pomodoro timer',
-  'Mood & wellness in planning',
-];
-
-const TYPEWRITER_FULL = 'The first wellness-centered study platform';
-const TYPEWRITER_SPEED_MS = 120;
+const TYPEWRITER_FULL = 'The first wellness study platform';
+const TYPEWRITER_SPEED_MS = 60;
 const TYPEWRITER_CURSOR_BLINK_MS = 530;
 
 function useFadeInOnScroll(opts = {}) {
@@ -130,6 +128,7 @@ export default function Landing({ onGetStarted, onGeneratePlan, onGenerateClassF
   const [plans, setPlans] = useState([]);
   const [plansLoading, setPlansLoading] = useState(false);
   const [auraOpacity, setAuraOpacity] = useState(1);
+  const [showFullTimeline, setShowFullTimeline] = useState(false);
 
   useEffect(() => {
     function onScroll() {
@@ -161,6 +160,10 @@ export default function Landing({ onGetStarted, onGeneratePlan, onGenerateClassF
   }, [isLoggedIn, user?.id]);
 
   const latestPlan = plans[0]?.plan;
+  const isTestPlan = latestPlan?.planType === 'test';
+  const hasDateEntries = (latestPlan?.weeklyTimeline || []).some((e) => e.date);
+  const useDateTimeline = isTestPlan && hasDateEntries;
+
   const timelineByDay = useMemo(() => {
     const weeklyTimeline = latestPlan?.weeklyTimeline || [];
     return weeklyTimeline.reduce((acc, entry) => {
@@ -171,6 +174,28 @@ export default function Landing({ onGetStarted, onGeneratePlan, onGenerateClassF
       return acc;
     }, {});
   }, [latestPlan]);
+
+  const timelineByDate = useMemo(() => {
+    if (!useDateTimeline) return {};
+    const weeklyTimeline = latestPlan?.weeklyTimeline || [];
+    return weeklyTimeline.reduce((acc, entry) => {
+      const dateStr = entry.date && String(entry.date).trim();
+      if (!dateStr) return acc;
+      if (!acc[dateStr]) acc[dateStr] = [];
+      acc[dateStr].push(entry);
+      return acc;
+    }, {});
+  }, [latestPlan, useDateTimeline]);
+
+  const sortedTimelineDates = useMemo(() => {
+    if (!useDateTimeline) return [];
+    return [...new Set((latestPlan?.weeklyTimeline || []).map((e) => e.date).filter(Boolean))].sort();
+  }, [latestPlan, useDateTimeline]);
+
+  const hasExtraTimelineDays = useDateTimeline && sortedTimelineDates.length > 7;
+  const visibleTimelineDates = useDateTimeline && hasExtraTimelineDays && !showFullTimeline
+    ? sortedTimelineDates.slice(0, 7)
+    : sortedTimelineDates;
 
   const weekDates = useMemo(() => getWeekDates(), []);
 
@@ -183,7 +208,7 @@ export default function Landing({ onGetStarted, onGeneratePlan, onGenerateClassF
         <div className="landing-aura" style={{ opacity: auraOpacity }} aria-hidden />
         <h1 className="landing-title text-gradient" >MindStudy AI</h1>
         <p className="landing-description">
-          Study with ease using integrated flashcards, study guides from your materials, and lecture recordings while taking advantage of AI powered study plans based on your mood, health, and time commitments.
+          Study with ease using integrated flashcards, study guides, practice tests, and lecture recordings while taking advantage of AI powered study plans based on your mood, health, and time commitments.
         </p>
 
         <div className="landing-logged-in-actions">
@@ -228,7 +253,7 @@ export default function Landing({ onGetStarted, onGeneratePlan, onGenerateClassF
                   className="landing-review-card"
                   onClick={() => onOpenPlan && onOpenPlan(row)}
                 >
-                  {getWeekOfMondayLabel(row.created_at)}
+                  {getPlanLabel(row)}
                 </button>
               ))}
             </div>
@@ -237,54 +262,120 @@ export default function Landing({ onGetStarted, onGeneratePlan, onGenerateClassF
 
         <FadeInOnScroll as="section" className="landing-section landing-timeline" aria-labelledby="timeline-heading">
           <h2 id="timeline-heading" className="landing-section-title">Timeline</h2>
-          <p className="landing-timeline-hint">Your week from your most recent plan</p>
+          <p className="landing-timeline-hint">
+            {useDateTimeline ? 'Your study timeline from your most recent plan' : 'Your week from your most recent plan'}
+          </p>
           {plans.length === 0 || !latestPlan ? (
             <p className="landing-review-empty">No plan yet. Generate a plan to see your week.</p>
           ) : (
             <div className="timeline-track">
               <div className="timeline-line" aria-hidden />
-              {weekDates.map(({ day, date }, index) => {
-                const entries = timelineByDay[day] || [];
-                const isLeft = index % 2 === 0;
-                const cardContent = (
-                  <div className="timeline-card">
-                    <span className="timeline-card-date">{formatDateLong(date)}</span>
-                    <span className={`timeline-card-tag ${entries.length > 0 ? 'timeline-card-tag--study' : 'timeline-card-tag--rest'}`}>
-                      {entries.length > 0 ? 'STUDY' : 'REST'}
-                    </span>
-                    <p className="timeline-card-desc">
-                      {entries.length > 0
-                        ? entries
-                            .map((e) => {
-                              const { subject } = parseActivity(e.activity);
-                              return `${subject || e.activity} at ${e.time}`;
-                            })
-                            .join(' · ')
-                        : 'No scheduled activities'}
-                    </p>
-                    {onOpenPlan && plans[0] && (
-                      <button
-                        type="button"
-                        className="timeline-card-link"
-                        onClick={() => onOpenPlan(plans[0])}
-                      >
-                        View plan →
-                      </button>
-                    )}
-                  </div>
-                );
-                return (
-                  <div key={day} className="timeline-item">
-                    <div className={`timeline-item-content timeline-item-content--${isLeft ? 'left' : 'right'}`}>
-                      {isLeft ? cardContent : null}
-                    </div>
-                    <div className="timeline-item-node" aria-hidden />
-                    <div className={`timeline-item-content timeline-item-content--${isLeft ? 'right' : 'left'}`}>
-                      {isLeft ? null : cardContent}
-                    </div>
-                  </div>
-                );
-              })}
+              {useDateTimeline
+                ? visibleTimelineDates.map((dateStr, index) => {
+                    const entries = timelineByDate[dateStr] || [];
+                    const isLeft = index % 2 === 0;
+                    const cardContent = (
+                      <div className="timeline-card">
+                        <span className="timeline-card-date">{formatDateFromISO(dateStr)}</span>
+                        <span className={`timeline-card-tag ${entries.length > 0 ? 'timeline-card-tag--study' : 'timeline-card-tag--rest'}`}>
+                          {entries.length > 0 ? 'STUDY' : 'REST'}
+                        </span>
+                        <p className="timeline-card-desc">
+                          {(() => {
+                            const studyEntries = entries
+                              .map((e) => {
+                                const { subject, duration } = parseActivity(e.activity);
+                                if (!duration) return null;
+                                const base = subject || 'Study session';
+                                return `${base} at ${e.time} (${duration})`;
+                              })
+                              .filter(Boolean);
+                            return studyEntries.length > 0
+                              ? studyEntries.join(' · ')
+                              : 'No scheduled activities';
+                          })()}
+                        </p>
+                        {onOpenPlan && plans[0] && (
+                          <button
+                            type="button"
+                            className="timeline-card-link"
+                            onClick={() => onOpenPlan(plans[0])}
+                          >
+                            View plan →
+                          </button>
+                        )}
+                      </div>
+                    );
+                    return (
+                      <div key={dateStr} className="timeline-item">
+                        <div className={`timeline-item-content timeline-item-content--${isLeft ? 'left' : 'right'}`}>
+                          {isLeft ? cardContent : null}
+                        </div>
+                        <div className="timeline-item-node" aria-hidden />
+                        <div className={`timeline-item-content timeline-item-content--${isLeft ? 'right' : 'left'}`}>
+                          {isLeft ? null : cardContent}
+                        </div>
+                      </div>
+                    );
+                  })
+                : weekDates.map(({ day, date }, index) => {
+                    const entries = timelineByDay[day] || [];
+                    const isLeft = index % 2 === 0;
+                    const cardContent = (
+                      <div className="timeline-card">
+                        <span className="timeline-card-date">{formatDateLong(date)}</span>
+                        <span className={`timeline-card-tag ${entries.length > 0 ? 'timeline-card-tag--study' : 'timeline-card-tag--rest'}`}>
+                          {entries.length > 0 ? 'STUDY' : 'REST'}
+                        </span>
+                        <p className="timeline-card-desc">
+                          {(() => {
+                            const studyEntries = entries
+                              .map((e) => {
+                                const { subject, duration } = parseActivity(e.activity);
+                                if (!duration) return null;
+                                const base = subject || 'Study session';
+                                return `${base} at ${e.time} (${duration})`;
+                              })
+                              .filter(Boolean);
+                            return studyEntries.length > 0
+                              ? studyEntries.join(' · ')
+                              : 'No scheduled activities';
+                          })()}
+                        </p>
+                        {onOpenPlan && plans[0] && (
+                          <button
+                            type="button"
+                            className="timeline-card-link"
+                            onClick={() => onOpenPlan(plans[0])}
+                          >
+                            View plan →
+                          </button>
+                        )}
+                      </div>
+                    );
+                    return (
+                      <div key={day} className="timeline-item">
+                        <div className={`timeline-item-content timeline-item-content--${isLeft ? 'left' : 'right'}`}>
+                          {isLeft ? cardContent : null}
+                        </div>
+                        <div className="timeline-item-node" aria-hidden />
+                        <div className={`timeline-item-content timeline-item-content--${isLeft ? 'right' : 'left'}`}>
+                          {isLeft ? null : cardContent}
+                        </div>
+                      </div>
+                    );
+                  })}
+            </div>
+          )}
+          {useDateTimeline && hasExtraTimelineDays && (
+            <div className="landing-timeline-toggle-row">
+              <button
+                type="button"
+                className="timeline-toggle-button"
+                onClick={() => setShowFullTimeline((prev) => !prev)}
+              >
+                {showFullTimeline ? 'Show first 7 days' : `Show all ${sortedTimelineDates.length} days`}
+              </button>
             </div>
           )}
         </FadeInOnScroll>
@@ -352,7 +443,7 @@ export default function Landing({ onGetStarted, onGeneratePlan, onGenerateClassF
           <div className="landing-step">
             <span className="landing-step-num">2</span>
             <div className="landing-step-content">
-              <h3 className="landing-step-title">Fill in the quick form</h3>
+              <h3 className="landing-step-title">Fill in the study plan form</h3>
               <p className="landing-step-desc">Share your mood, goals, schedule, and any deadlines so we can tailor your plan.</p>
             </div>
           </div>

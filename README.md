@@ -19,7 +19,7 @@ npm run dev
 
 Open [http://localhost:5173](http://localhost:5173).
 
-Copy `.env.example` to `.env` and set `VITE_MINIMAX_API_KEY` for AI plans. For auth and saving plans, add Supabase keys (see below).
+Copy `.env.example` to `.env` and set `VITE_OPENAI_API_KEY` for AI plans. For auth and saving plans, add Supabase keys (see below).
 
 ### Connecting Supabase (auth + saved plans)
 

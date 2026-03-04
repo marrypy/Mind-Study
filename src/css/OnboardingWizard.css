@@ -152,6 +152,148 @@
   color: var(--text);
 }
 
+/* Plan type toggle */
+.wizard-plan-type {
+  margin-bottom: 0.5rem;
+}
+
+.wizard-plan-type-options {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.wizard-plan-type-btn {
+  flex: 1;
+  min-width: 140px;
+  padding: 0.85rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 12px;
+  border: 2px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.wizard-plan-type-btn:hover {
+  border-color: var(--accent-lime);
+}
+
+.wizard-plan-type-btn--active {
+  border-color: var(--accent-lime);
+  background: linear-gradient(135deg, rgba(132, 204, 22, 0.12), rgba(6, 182, 212, 0.08));
+}
+
+.wizard-plan-type-hint {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin: 0.75rem 0 0 0;
+}
+
+.wizard-plan-type-pill {
+  display: inline-block;
+  margin-left: 0.4rem;
+  padding: 0.1rem 0.5rem;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-radius: 999px;
+  border: 1px solid var(--accent-lime);
+  color: var(--accent-lime);
+}
+
+.wizard-plan-type-note {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* Test date dropdowns */
+.wizard-test-date-heading {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
+.wizard-test-date-dropdowns {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.wizard-test-date-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.wizard-test-date-label span {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.wizard-test-date-dropdowns .wizard-select {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  font-size: 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--input-bg);
+  color: var(--text);
+}
+
+/* Confidence scale */
+.wizard-confidence-hint {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin: 0 0 0.75rem 0;
+}
+
+.wizard-confidence-scale {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.wizard-confidence-btn {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 10px;
+  border: 2px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.wizard-confidence-btn:hover {
+  border-color: var(--accent-lime);
+}
+
+.wizard-confidence-btn--active {
+  border-color: var(--accent-lime);
+  background: var(--accent-gradient);
+  color: white;
+}
+
+.wizard-confidence-value {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  margin: 0.75rem 0 0 0;
+}
+
 .wizard-checkbox {
   flex-direction: row !important;
   align-items: center;

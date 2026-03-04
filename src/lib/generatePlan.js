@@ -25,6 +25,12 @@ export function generatePlan(context) {
   const circumstances = (context.circumstances || '').trim();
   const sickness = (context.sickness || '').trim();
   const extra = (context.extra || '').trim();
+  const planType = context.planType || 'weekly';
+  const testDateISO = context.testDateISO || null;
+  const confidenceRaw = context.confidence != null ? Number(context.confidence) : 5;
+  const confidence = Number.isFinite(confidenceRaw)
+    ? Math.min(10, Math.max(1, confidenceRaw))
+    : 5;
 
   // Summary
   plan.summary = buildSummary(name, mood, circumstances, sickness, weekPlans, classes, goals);
@@ -80,8 +86,12 @@ export function generatePlan(context) {
     plan.tips.push(['Take short breaks.', 'Review notes at the end of each session.', 'Stay hydrated.', 'Find a quiet spot.'][plan.tips.length]);
   }
 
-  // Weekly time-based timeline from study blocks
-  plan.weeklyTimeline = buildWeeklyTimeline(plan.studyBlocks);
+  // Timeline: weekly vs test-based date range
+  if (planType === 'test' && testDateISO) {
+    plan.weeklyTimeline = buildTestTimeline(plan.studyBlocks, testDateISO, confidence);
+  } else {
+    plan.weeklyTimeline = buildWeeklyTimeline(plan.studyBlocks);
+  }
 
   return plan;
 }
@@ -115,6 +125,72 @@ function buildWeeklyTimeline(studyBlocks) {
       activity: `${block.title} (${block.durationMinutes} min)`,
     });
   });
+  return timeline;
+}
+
+function getDailyStudyMinutes(confidence, daysRemaining) {
+  if (daysRemaining <= 2) {
+    if (confidence <= 3) return 150; // 2.5h/day
+    if (confidence <= 6) return 120; // 2h/day
+    if (confidence <= 8) return 90;  // 1.5h/day
+    return 60;                       // 1h/day
+  }
+  if (daysRemaining <= 7) {
+    if (confidence <= 3) return 120; // 2h/day
+    if (confidence <= 6) return 90;  // 1.5h/day
+    return 60;                       // 1h/day
+  }
+  // More than a week out: gentler pacing
+  if (confidence <= 3) return 90;    // 1.5h/day
+  if (confidence <= 6) return 60;    // 1h/day
+  return 45;                         // 45min/day
+}
+
+function buildTestTimeline(studyBlocks, testDateISO, confidence) {
+  const timeline = [];
+  const end = new Date(testDateISO);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  end.setHours(0, 0, 0, 0);
+  if (Number.isNaN(end.getTime()) || end < today) {
+    return timeline;
+  }
+
+  const MS_PER_DAY = 24 * 60 * 60 * 1000;
+  const daysRemaining = Math.floor((end - today) / MS_PER_DAY) + 1;
+  const targetMinutesPerDay = getDailyStudyMinutes(confidence, daysRemaining);
+
+  const subjects = (studyBlocks || []).map((b) => b.title).filter(Boolean);
+  const uniqueSubjects = Array.from(new Set(subjects));
+  const pool = uniqueSubjects.length ? uniqueSubjects : ['Study'];
+  let subjectIndex = 0;
+  const pickSubject = () => pool[subjectIndex++ % pool.length];
+
+  const times = [
+    '7:00 AM', '9:00 AM', '11:00 AM',
+    '2:00 PM', '4:00 PM', '7:00 PM',
+  ];
+
+  const baseSessionMinutes = (studyBlocks && studyBlocks[0]?.durationMinutes) || 45;
+  const perSessionMinutes = confidence <= 3 ? 40 : confidence <= 6 ? 35 : 30;
+
+  const cursor = new Date(today);
+  while (cursor <= end) {
+    const iso = cursor.toISOString().slice(0, 10);
+    const slotsForDayRaw = Math.round(targetMinutesPerDay / perSessionMinutes);
+    const slotsForDay = Math.min(3, Math.max(1, slotsForDayRaw || 1));
+    for (let i = 0; i < slotsForDay; i += 1) {
+      const subject = pickSubject();
+      const time = times[(cursor.getDate() + i) % times.length];
+      timeline.push({
+        date: iso,
+        time,
+        activity: `${subject} (${perSessionMinutes || baseSessionMinutes} min)`,
+      });
+    }
+    cursor.setDate(cursor.getDate() + 1);
+  }
+
   return timeline;
 }
 

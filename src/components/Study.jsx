@@ -1,13 +1,25 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { loadStudyData, saveStudyData, id } from '../lib/studyStorage.js';
-import { generateFlashcards, generateStudyGuide, generatePracticeTest, generateLectureSummary } from '../lib/minimax.js';
+import { chatCompletion } from '../lib/openai.js';
 import { extractTextFromPdf } from '../lib/pdfText.js';
+import { publishStudyItem, setPublicItemVisibility } from '../lib/publicLibrary.js';
+import { getSubscriptionTier } from '../lib/subscription.js';
+import { canCreateStudyItems, recordStudyItems, FREE_ITEM_LIMIT_PER_WEEK } from '../lib/usageLimits.js';
 import '../css/Study.css';
 
-export default function Study({ selectedFolderId = null, onSelectFolderId = () => {}, onAddRecent = () => {} }) {
+export default function Study({
+  selectedFolderId = null,
+  onSelectFolderId = () => {},
+  initialViewingFolderId = null,
+  initialViewingItemId = null,
+  onOpenItem = () => {},
+  onBackFromItem = () => {},
+  onAddRecent = () => {},
+}) {
   const { user } = useAuth();
   const userId = user?.id || null;
+  const subscriptionTier = getSubscriptionTier(user);
 
   const [folders, setFolders] = useState([]);
   const [itemsByFolder, setItemsByFolder] = useState({});
@@ -60,6 +72,17 @@ export default function Study({ selectedFolderId = null, onSelectFolderId = () =
   const [editingLectureTitleId, setEditingLectureTitleId] = useState(null);
   const [editingLectureTitleValue, setEditingLectureTitleValue] = useState('');
   const [viewingLectureTranscript, setViewingLectureTranscript] = useState('');
+  const [publishingItemId, setPublishingItemId] = useState(null);
+  const [publishError, setPublishError] = useState(null);
+  const [createIsPublic, setCreateIsPublic] = useState(true);
+  const [flashPracticeActive, setFlashPracticeActive] = useState(false);
+  const [flashPracticeQueue, setFlashPracticeQueue] = useState([]);
+  const [flashPracticeIndex, setFlashPracticeIndex] = useState(0);
+  const [flashPracticeWrong, setFlashPracticeWrong] = useState([]);
+  const [flashPracticeRound, setFlashPracticeRound] = useState(1);
+  const [flashPracticeRightTotal, setFlashPracticeRightTotal] = useState(0);
+  const [flashPracticeWrongTotal, setFlashPracticeWrongTotal] = useState(0);
+  const [flashPracticePhase, setFlashPracticePhase] = useState('round'); // 'round' | 'summary' | 'done'
 
   const persist = useCallback((nextFolders, nextItems) => {
     saveStudyData(userId, { folders: nextFolders, itemsByFolder: nextItems });
@@ -70,6 +93,95 @@ export default function Study({ selectedFolderId = null, onSelectFolderId = () =
     setFolders(data.folders);
     setItemsByFolder(data.itemsByFolder);
   }, [userId]);
+
+  // Sync viewer from URL (/study/:folderId/:itemId)
+  useEffect(() => {
+    if (!initialViewingFolderId || !initialViewingItemId) return;
+    const folder = folders.find((f) => f.id === initialViewingFolderId);
+    const list = folder ? (itemsByFolder[initialViewingFolderId] || []) : [];
+    const item = list.find((i) => i.id === initialViewingItemId);
+    if (item) {
+      onSelectFolderId(initialViewingFolderId);
+      setViewingItem(item);
+      setFlashPracticeActive(false);
+      setFlashPracticeQueue([]);
+      setFlashPracticeWrong([]);
+    }
+  }, [initialViewingFolderId, initialViewingItemId, folders, itemsByFolder, onSelectFolderId]);
+
+  function resetFlashPractice() {
+    setFlashPracticeActive(false);
+    setFlashPracticeQueue([]);
+    setFlashPracticeIndex(0);
+    setFlashPracticeWrong([]);
+    setFlashPracticeRound(1);
+    setFlashPracticeRightTotal(0);
+    setFlashPracticeWrongTotal(0);
+    setFlashPracticePhase('round');
+    setFlashcardFlipped(false);
+  }
+
+  function startFlashPractice(cardsLength) {
+    if (!cardsLength) return;
+    setFlashPracticeActive(true);
+    setFlashPracticeQueue(Array.from({ length: cardsLength }, (_, i) => i));
+    setFlashPracticeIndex(0);
+    setFlashPracticeWrong([]);
+    setFlashPracticeRound(1);
+    setFlashPracticeRightTotal(0);
+    setFlashPracticeWrongTotal(0);
+    setFlashPracticePhase('round');
+    setFlashcardFlipped(false);
+  }
+
+  function handleFlashPracticeAnswer(isRight) {
+    if (!flashPracticeActive || flashPracticeQueue.length === 0) return;
+    const currentIdxInQueue = flashPracticeIndex;
+    const cardIndex = flashPracticeQueue[currentIdxInQueue];
+    const isLast = currentIdxInQueue >= flashPracticeQueue.length - 1;
+
+    if (isRight) {
+      setFlashPracticeRightTotal((v) => v + 1);
+    }
+    let nextWrong = flashPracticeWrong;
+    if (!isRight) {
+      nextWrong = [...flashPracticeWrong, cardIndex];
+    }
+
+    if (!isLast) {
+      setFlashPracticeWrong(nextWrong);
+      setFlashPracticeIndex((i) => i + 1);
+      setFlashcardFlipped(false);
+    } else {
+      setFlashPracticeWrong(nextWrong);
+      setFlashcardFlipped(false);
+      setFlashPracticePhase(nextWrong.length === 0 ? 'done' : 'summary');
+      if (nextWrong.length > 0) {
+        // prepare next round when user continues
+        // round number increments when they move on from summary
+      }
+    }
+    if (!isRight) {
+      setFlashPracticeWrongTotal((v) => v + 1);
+    }
+  }
+
+  // Sync viewer from URL (e.g. /study/folderId/itemId)
+  useEffect(() => {
+    if (!initialViewingFolderId || !initialViewingItemId) {
+      setViewingItem(null);
+      return;
+    }
+    const folder = folders.find((f) => f.id === initialViewingFolderId);
+    const list = folder ? (itemsByFolder[initialViewingFolderId] || []) : [];
+    const item = list.find((i) => i.id === initialViewingItemId);
+    if (item) {
+      onSelectFolderId(initialViewingFolderId);
+      setViewingItem(item);
+    } else {
+      setViewingItem(null);
+    }
+  }, [initialViewingFolderId, initialViewingItemId, folders, itemsByFolder, onSelectFolderId]);
 
 
   function handleAddFolder() {
@@ -86,6 +198,84 @@ export default function Study({ selectedFolderId = null, onSelectFolderId = () =
     setShowAddFolder(false);
   }
 
+  async function generateFlashcards(text, count) {
+    const messages = [
+      {
+        role: 'system',
+        content: 'You generate JSON arrays of flashcards. Output only JSON: [{"front":"...","back":"..."}].',
+      },
+      {
+        role: 'user',
+        content: `Create ${count} flashcards from this text:\n\n${text}`,
+      },
+    ];
+    const reply = await chatCompletion(messages);
+    try {
+      const parsed = JSON.parse(reply);
+      if (Array.isArray(parsed)) return parsed;
+    } catch {
+      // fall through
+    }
+    return [];
+  }
+
+  async function generateStudyGuide(text, mode) {
+    const messages = [
+      {
+        role: 'system',
+        content: 'You generate JSON study guides: {"sections":[{"title":"...","content":"..."}]}. Output only JSON.',
+      },
+      {
+        role: 'user',
+        content: `${mode === 'long' ? 'Make a detailed study guide.' : 'Make a concise study guide.'}\n\nText:\n${text}`,
+      },
+    ];
+    const reply = await chatCompletion(messages);
+    try {
+      const parsed = JSON.parse(reply);
+      if (parsed && Array.isArray(parsed.sections)) return parsed;
+    } catch {
+      // ignore
+    }
+    return { sections: [] };
+  }
+
+  async function generatePracticeTest(text, count) {
+    const messages = [
+      {
+        role: 'system',
+        content: 'You generate JSON multiple-choice questions: [{"question":"...","choices":["A","B","C","D"],"answerIndex":0}]. Output only JSON.',
+      },
+      {
+        role: 'user',
+        content: `Create ${count} practice questions from this text:\n\n${text}`,
+      },
+    ];
+    const reply = await chatCompletion(messages);
+    try {
+      const parsed = JSON.parse(reply);
+      if (Array.isArray(parsed)) return parsed;
+    } catch {
+      // ignore
+    }
+    return [];
+  }
+
+  async function generateLectureSummary(text) {
+    const messages = [
+      {
+        role: 'system',
+        content: 'You summarize lecture transcripts into short, clear study notes.',
+      },
+      {
+        role: 'user',
+        content: `Summarize this lecture into concise study notes:\n\n${text}`,
+      },
+    ];
+    const reply = await chatCompletion(messages);
+    return reply.trim();
+  }
+
   function handleDeleteFolder(folderId) {
     const next = folders.filter((f) => f.id !== folderId);
     const nextItems = { ...itemsByFolder };
@@ -94,6 +284,33 @@ export default function Study({ selectedFolderId = null, onSelectFolderId = () =
     setItemsByFolder(nextItems);
     if (selectedFolderId === folderId) onSelectFolderId(null);
     persist(next, nextItems);
+  }
+
+  async function handleTogglePublicItem(folderId, itemId) {
+    setPublishError(null);
+    const list = itemsByFolder[folderId] || [];
+    const item = list.find((i) => i.id === itemId);
+    if (!item) return;
+    try {
+      setPublishingItemId(itemId);
+      if (!item.isPublic) {
+        const created = await publishStudyItem(item, folders.find((f) => f.id === folderId)?.name);
+        const nextList = list.map((i) =>
+          i.id === itemId ? { ...i, isPublic: true, publicId: created?.id || null } : i,
+        );
+        setItemsByFolder({ ...itemsByFolder, [folderId]: nextList });
+        persist(folders, { ...itemsByFolder, [folderId]: nextList });
+      } else {
+        if (item.publicId) await setPublicItemVisibility(item.publicId, false);
+        const nextList = list.map((i) => (i.id === itemId ? { ...i, isPublic: false } : i));
+        setItemsByFolder({ ...itemsByFolder, [folderId]: nextList });
+        persist(folders, { ...itemsByFolder, [folderId]: nextList });
+      }
+    } catch (err) {
+      setPublishError(err?.message || 'Could not update public visibility.');
+    } finally {
+      setPublishingItemId(null);
+    }
   }
 
   function handleDeleteItem(folderId, itemId) {
@@ -115,7 +332,7 @@ export default function Study({ selectedFolderId = null, onSelectFolderId = () =
   }
 
   function handleRenameItem(folderId, itemId, title) {
-    const trimmedTitle = (title || '').trim();
+    const trimmedTitle = clampTitle(title);
     if (!trimmedTitle) return;
     const list = itemsByFolder[folderId] || [];
     const nextList = list.map((i) => (i.id === itemId ? { ...i, title: trimmedTitle } : i));
@@ -189,7 +406,7 @@ export default function Study({ selectedFolderId = null, onSelectFolderId = () =
         const reader = new FileReader();
         reader.onloadend = () => {
           const base64 = typeof reader.result === 'string' ? reader.result.split(',')[1] : '';
-          const name = `Lecture ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+          const name = clampTitle(`Lecture ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`);
           const transcriptText = recognitionTranscriptRef.current.trim();
           const folderId = recordingForFolderRef.current;
           if (folderId) {
@@ -208,6 +425,7 @@ export default function Study({ selectedFolderId = null, onSelectFolderId = () =
             };
             setItemsByFolder(nextItems);
             persist(folders, nextItems);
+            recordStudyItems(userId, 1);
           }
           recognitionTranscriptRef.current = '';
           setLectureFlowFolderId(null);
@@ -274,6 +492,12 @@ export default function Study({ selectedFolderId = null, onSelectFolderId = () =
     if (playingId) setPlayingId(null);
   }
 
+  function clampTitle(raw) {
+    const t = (raw || '').trim();
+    if (!t) return '';
+    return t.length <= 50 ? t : t.slice(0, 50);
+  }
+
   function formatDuration(sec) {
     const m = Math.floor(sec / 60);
     const s = sec % 60;
@@ -285,19 +509,46 @@ export default function Study({ selectedFolderId = null, onSelectFolderId = () =
       ? Object.keys(generatedByType).filter((t) => generatedByType[t] != null)
       : [typeOrAll];
     if (!selectedFolderId || typesToSave.length === 0) return;
-    const list = itemsByFolder[selectedFolderId] || [];
-    let nextList = [...list];
+    const newItems = [];
     for (const type of typesToSave) {
       const g = generatedByType[type];
       if (g == null) continue;
       const defaultTitle = type === 'flashcards' ? 'Flashcards' : type === 'study_guide' ? 'Study guide' : 'Practice test';
-      const title = (saveTitlesByType[type] || saveTitle || '').trim() || defaultTitle;
+      const rawTitle = (saveTitlesByType[type] || saveTitle || '') || defaultTitle;
+      const title = clampTitle(rawTitle);
       const data = type === 'flashcards' ? { cards: g } : type === 'study_guide' ? { sections: g.sections } : { questions: g };
-      nextList = [...nextList, { id: id(), type, title, data }];
+      const newItem = { id: id(), type, title, data, isPublic: false, publicId: null };
+      newItems.push(newItem);
     }
-    const nextItems = { ...itemsByFolder, [selectedFolderId]: nextList };
+    if (newItems.length === 0) return;
+    const { allowed } = canCreateStudyItems(userId, subscriptionTier, newItems.length);
+    if (!allowed) {
+      setGenError(`Free plan includes ${FREE_ITEM_LIMIT_PER_WEEK} study items per week. Upgrade to Pro for unlimited items.`);
+      return;
+    }
+    const list = itemsByFolder[selectedFolderId] || [];
+    const nextList = [...list, ...newItems];
+    let nextItems = { ...itemsByFolder, [selectedFolderId]: nextList };
     setItemsByFolder(nextItems);
     persist(folders, nextItems);
+    recordStudyItems(userId, newItems.length);
+    if (createIsPublic && newItems.length > 0) {
+      (async () => {
+        try {
+          const folder = folders.find((f) => f.id === selectedFolderId);
+          let updated = nextItems[selectedFolderId] || [];
+          for (const newItem of newItems) {
+            const created = await publishStudyItem(newItem, folder?.name);
+            updated = updated.map((i) => (i.id === newItem.id ? { ...i, isPublic: true, publicId: created?.id || null } : i));
+          }
+          nextItems = { ...nextItems, [selectedFolderId]: updated };
+          setItemsByFolder(nextItems);
+          persist(folders, nextItems);
+        } catch (err) {
+          setPublishError(err?.message || 'Could not publish one or more items.');
+        }
+      })();
+    }
     if (typeOrAll === 'all' || typesToSave.length >= Object.keys(generatedByType).filter((t) => generatedByType[t] != null).length) {
       setCreateMode(null);
       setCreateModes([]);
@@ -318,12 +569,34 @@ export default function Study({ selectedFolderId = null, onSelectFolderId = () =
   function handleSaveSingleGenerated() {
     if (!selectedFolderId || !generated) return;
     const type = createMode;
-    const title = (saveTitle || '').trim() || (type === 'flashcards' ? 'Flashcards' : type === 'study_guide' ? 'Study guide' : 'Practice test');
+    const rawTitle = (saveTitle || '') || (type === 'flashcards' ? 'Flashcards' : type === 'study_guide' ? 'Study guide' : 'Practice test');
+    const title = clampTitle(rawTitle);
     const data = type === 'flashcards' ? { cards: generated } : type === 'study_guide' ? { sections: generated.sections } : { questions: generated };
+    const { allowed } = canCreateStudyItems(userId, subscriptionTier, 1);
+    if (!allowed) {
+      setGenError(`Free plan includes ${FREE_ITEM_LIMIT_PER_WEEK} study items per week. Upgrade to Pro for unlimited items.`);
+      return;
+    }
     const list = itemsByFolder[selectedFolderId] || [];
-    const nextItems = { ...itemsByFolder, [selectedFolderId]: [...list, { id: id(), type, title, data }] };
+    const newItem = { id: id(), type, title, data, isPublic: false, publicId: null };
+    let nextItems = { ...itemsByFolder, [selectedFolderId]: [...list, newItem] };
     setItemsByFolder(nextItems);
     persist(folders, nextItems);
+    recordStudyItems(userId, 1);
+    if (createIsPublic) {
+      (async () => {
+        try {
+          const folder = folders.find((f) => f.id === selectedFolderId);
+          const created = await publishStudyItem(newItem, folder?.name);
+          const updated = (nextItems[selectedFolderId] || []).map((i) => (i.id === newItem.id ? { ...i, isPublic: true, publicId: created?.id || null } : i));
+          nextItems = { ...nextItems, [selectedFolderId]: updated };
+          setItemsByFolder(nextItems);
+          persist(folders, nextItems);
+        } catch (err) {
+          setPublishError(err?.message || 'Could not publish this item.');
+        }
+      })();
+    }
     setCreateMode(null);
     setCreateModes([]);
     setPasteText('');
@@ -344,6 +617,16 @@ export default function Study({ selectedFolderId = null, onSelectFolderId = () =
     if (!combinedText.trim()) return;
     const modes = createModes.length ? createModes : (createMode ? [createMode] : []);
     if (modes.length === 0) return;
+    // Pre-check usage limits before generating anything
+    const { allowed } = canCreateStudyItems(userId, subscriptionTier, modes.length);
+    if (!allowed) {
+      const msg = `Free plan includes ${FREE_ITEM_LIMIT_PER_WEEK} study items per week. Upgrade to Pro for unlimited items.`;
+      setGenError(msg);
+      if (typeof window !== 'undefined' && window.alert) {
+        window.alert(msg);
+      }
+      return;
+    }
     setIsGenerating(true);
     setGenError(null);
     setGeneratedByType({ flashcards: null, study_guide: null, practice_test: null });
@@ -450,15 +733,190 @@ export default function Study({ selectedFolderId = null, onSelectFolderId = () =
       const cards = item.data?.cards || [];
       const idx = Math.min(flashcardIndex, Math.max(0, cards.length - 1));
       const card = cards[idx];
+      const practiceIdxInQueue = flashPracticeQueue[flashPracticeIndex] ?? 0;
+      const practiceCard = cards[practiceIdxInQueue] || null;
+      const totalCards = cards.length;
+
+      if (flashPracticeActive && totalCards > 0) {
+        if (flashPracticePhase === 'summary') {
+          const totalThisRound = flashPracticeQueue.length;
+          const wrongThisRound = flashPracticeWrong.length;
+          const rightThisRound = Math.max(0, totalThisRound - wrongThisRound);
+          const pct = totalThisRound > 0 ? Math.round((rightThisRound / totalThisRound) * 100) : 0;
+          return (
+            <div className="study-viewer">
+              <div className="study-viewer-header">
+                <button
+                  type="button"
+                  className="study-viewer-back"
+                  onClick={() => {
+                    resetFlashPractice();
+                    onBackFromItem();
+                    setViewingItem(null);
+                  }}
+                >
+                  ← Back
+                </button>
+                <span className="study-viewer-title">{item.title} — Practice</span>
+              </div>
+              <div className="study-practice-summary">
+                <h3>Round {flashPracticeRound} summary</h3>
+                <p>
+                  Right: {rightThisRound} &nbsp; Wrong: {wrongThisRound} &nbsp; (
+                  {pct}
+                  % correct)
+                </p>
+                <button
+                  type="button"
+                  className="study-btn study-btn-primary"
+                  onClick={() => {
+                    setFlashPracticeQueue(flashPracticeWrong);
+                    setFlashPracticeWrong([]);
+                    setFlashPracticeIndex(0);
+                    setFlashPracticeRound((r) => r + 1);
+                    setFlashPracticePhase('round');
+                    setFlashcardFlipped(false);
+                  }}
+                >
+                  Practice wrong cards
+                </button>
+              </div>
+            </div>
+          );
+        }
+
+        if (flashPracticePhase === 'done') {
+          const totalAnswered = flashPracticeRightTotal + flashPracticeWrongTotal;
+          const pctTotal =
+            totalAnswered > 0 ? Math.round((flashPracticeRightTotal / totalAnswered) * 100) : 100;
+          return (
+            <div className="study-viewer">
+              <div className="study-viewer-header">
+                <button
+                  type="button"
+                  className="study-viewer-back"
+                  onClick={() => {
+                    resetFlashPractice();
+                    onBackFromItem();
+                    setViewingItem(null);
+                  }}
+                >
+                  ← Back
+                </button>
+                <span className="study-viewer-title">{item.title} — Practice complete</span>
+              </div>
+              <div className="study-practice-summary">
+                <h3>Nice work!</h3>
+                <p>
+                  Total right: {flashPracticeRightTotal} &nbsp; Total wrong: {flashPracticeWrongTotal}
+                  {totalAnswered > 0 && (
+                    <>
+                      &nbsp; ({pctTotal}
+                      % correct)
+                    </>
+                  )}
+                </p>
+                <div className="study-practice-actions">
+                  <button
+                    type="button"
+                    className="study-btn study-btn-primary"
+                    onClick={() => startFlashPractice(totalCards)}
+                  >
+                    Restart practice
+                  </button>
+                  <button
+                    type="button"
+                    className="study-btn study-btn-secondary"
+                    onClick={() => {
+                      resetFlashPractice();
+                      onBackFromItem();
+                      setViewingItem(null);
+                    }}
+                  >
+                    Exit
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        // Active round
+        const practiceCardToShow = practiceCard;
+        return (
+          <div className="study-viewer">
+            <div className="study-viewer-header">
+              <button
+                type="button"
+                className="study-viewer-back"
+                onClick={() => {
+                  resetFlashPractice();
+                  onBackFromItem();
+                  setViewingItem(null);
+                }}
+              >
+                ← Back
+              </button>
+              <span className="study-viewer-title">{item.title} — Practice</span>
+              <span className="study-viewer-nav">
+                Round {flashPracticeRound} · Card {flashPracticeIndex + 1} / {flashPracticeQueue.length}
+              </span>
+            </div>
+            <div className="study-flashcard-wrap">
+              {practiceCardToShow ? (
+                <>
+                  <button
+                    type="button"
+                    className="study-flashcard"
+                    onClick={() => setFlashcardFlipped((f) => !f)}
+                  >
+                    <p className="study-flashcard-label">
+                      {flashcardFlipped ? 'Back' : 'Front'}
+                    </p>
+                    <p className="study-flashcard-text">
+                      {flashcardFlipped ? practiceCardToShow.back : practiceCardToShow.front}
+                    </p>
+                  </button>
+                  <div className="study-practice-buttons">
+                    <button
+                      type="button"
+                      className="study-btn study-btn-secondary"
+                      onClick={() => handleFlashPracticeAnswer(false)}
+                    >
+                      Wrong
+                    </button>
+                    <button
+                      type="button"
+                      className="study-btn study-btn-primary"
+                      onClick={() => handleFlashPracticeAnswer(true)}
+                    >
+                      Right
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <p>No cards in this set.</p>
+              )}
+            </div>
+          </div>
+        );
+      }
+
       return (
         <div className="study-viewer">
           <div className="study-viewer-header">
-            <button type="button" className="study-viewer-back" onClick={() => { setViewingItem(null); setFlashcardIndex(0); setFlashcardFlipped(false); }}>
+            <button type="button" className="study-viewer-back" onClick={() => { onBackFromItem(); setViewingItem(null); setFlashcardIndex(0); setFlashcardFlipped(false); }}>
               ← Back
             </button>
             <span className="study-viewer-title">{item.title}</span>
             <span className="study-viewer-nav">{idx + 1} / {cards.length}</span>
-            <button type="button" className="study-viewer-delete" onClick={() => { handleDeleteItem(folder.id, item.id); setViewingItem(null); setFlashcardIndex(0); setFlashcardFlipped(false); }} aria-label="Delete">Delete</button>
+            <button type="button" className="study-viewer-delete" onClick={() => { handleDeleteItem(folder.id, item.id); onBackFromItem(); setViewingItem(null); setFlashcardIndex(0); setFlashcardFlipped(false); }} aria-label="Delete">Delete</button>
+          </div>
+          <div className="study-viewer-public-row">
+            <button type="button" className="study-public-toggle-btn" onClick={() => handleTogglePublicItem(folder.id, item.id)} disabled={publishingItemId === item.id}>
+              {publishingItemId === item.id ? 'Updating…' : item.isPublic ? 'Make private' : 'Make public'}
+            </button>
+            <span className="study-public-label">{item.isPublic ? 'Public in library' : 'Private'}</span>
           </div>
           <div className="study-flashcard-wrap">
             {card ? (
@@ -475,6 +933,15 @@ export default function Study({ selectedFolderId = null, onSelectFolderId = () =
                   <button type="button" disabled={idx <= 0} onClick={() => { setFlashcardIndex(idx - 1); setFlashcardFlipped(false); }}>Prev</button>
                   <button type="button" disabled={idx >= cards.length - 1} onClick={() => { setFlashcardIndex(idx + 1); setFlashcardFlipped(false); }}>Next</button>
                 </div>
+                <div className="study-practice-start">
+                  <button
+                    type="button"
+                    className="study-btn study-btn-primary"
+                    onClick={() => startFlashPractice(cards.length)}
+                  >
+                    Practice
+                  </button>
+                </div>
               </>
             ) : (
               <p>No cards in this set.</p>
@@ -490,27 +957,78 @@ export default function Study({ selectedFolderId = null, onSelectFolderId = () =
       const idx = Math.min(testQuestionIndex, total);
       const q = idx < total ? questions[idx] : null;
       const showScore = total === 0 || (testScore.total > 0 && idx >= total);
+    const options = q ? (q.choices || q.options || []) : [];
+    const correctIndex = q && typeof q.answerIndex === 'number' ? q.answerIndex : q?.correctIndex;
       return (
         <div className="study-viewer">
           <div className="study-viewer-header">
-            <button type="button" className="study-viewer-back" onClick={() => { setViewingItem(null); setTestQuestionIndex(0); setTestSelected(null); setTestShowResult(false); setTestScore({ correct: 0, total: 0 }); }}>← Back</button>
+            <button type="button" className="study-viewer-back" onClick={() => { onBackFromItem(); setViewingItem(null); setTestQuestionIndex(0); setTestSelected(null); setTestShowResult(false); setTestScore({ correct: 0, total: 0 }); }}>← Back</button>
             <span className="study-viewer-title">{item.title}</span>
             {!showScore && total > 0 && <span className="study-viewer-nav">{Math.min(idx + 1, total)} / {total}</span>}
-            <button type="button" className="study-viewer-delete" onClick={() => { handleDeleteItem(folder.id, item.id); setViewingItem(null); setTestQuestionIndex(0); setTestSelected(null); setTestShowResult(false); setTestScore({ correct: 0, total: 0 }); }} aria-label="Delete">Delete</button>
+            <button type="button" className="study-viewer-delete" onClick={() => { handleDeleteItem(folder.id, item.id); onBackFromItem(); setViewingItem(null); setTestQuestionIndex(0); setTestSelected(null); setTestShowResult(false); setTestScore({ correct: 0, total: 0 }); }} aria-label="Delete">Delete</button>
+          </div>
+          <div className="study-viewer-public-row">
+            <button type="button" className="study-public-toggle-btn" onClick={() => handleTogglePublicItem(folder.id, item.id)} disabled={publishingItemId === item.id}>
+              {publishingItemId === item.id ? 'Updating…' : item.isPublic ? 'Make private' : 'Make public'}
+            </button>
+            <span className="study-public-label">{item.isPublic ? 'Public in library' : 'Private'}</span>
           </div>
           <div className="study-practice-test">
             {showScore ? (
               <div className="study-test-score">
-                <h3>Results</h3>
-                <p className="study-test-score-text">You got {testScore.correct} out of {testScore.total} correct.</p>
+              <h3>Results</h3>
+              {total > 0 ? (
+                <>
+                  <p className="study-test-score-text">
+                    You got {testScore.correct} out of {testScore.total} correct.
+                  </p>
+                  <p className="study-test-score-text">
+                    Score:{' '}
+                    {testScore.total > 0
+                      ? Math.round((testScore.correct / testScore.total) * 100)
+                      : 0}
+                    %
+                  </p>
+                  <div className="study-practice-actions">
+                    <button
+                      type="button"
+                      className="study-btn study-btn-primary"
+                      onClick={() => {
+                        setTestQuestionIndex(0);
+                        setTestSelected(null);
+                        setTestShowResult(false);
+                        setTestScore({ correct: 0, total: 0 });
+                      }}
+                    >
+                      Restart test
+                    </button>
+                    <button
+                      type="button"
+                      className="study-btn study-btn-secondary"
+                      onClick={() => {
+                        onBackFromItem();
+                        setViewingItem(null);
+                        setTestQuestionIndex(0);
+                        setTestSelected(null);
+                        setTestShowResult(false);
+                        setTestScore({ correct: 0, total: 0 });
+                      }}
+                    >
+                      Exit
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <p className="study-test-score-text">No questions in this test.</p>
+              )}
               </div>
             ) : q ? (
               <>
                 <p className="study-test-question">{q.question}</p>
                 <div className="study-test-options">
-                  {(q.options || []).map((opt, i) => {
+                {options.map((opt, i) => {
                     const selected = testSelected === i;
-                    const correct = q.correctIndex === i;
+                  const correct = typeof correctIndex === 'number' && correctIndex === i;
                     const showRight = testShowResult && correct;
                     const showWrong = testShowResult && selected && !correct;
                     return (
@@ -522,7 +1040,10 @@ export default function Study({ selectedFolderId = null, onSelectFolderId = () =
                           if (testShowResult) return;
                           setTestSelected(i);
                           setTestShowResult(true);
-                          setTestScore((s) => ({ correct: s.correct + (i === q.correctIndex ? 1 : 0), total: s.total + 1 }));
+                        setTestScore((s) => ({
+                          correct: s.correct + (typeof correctIndex === 'number' && i === correctIndex ? 1 : 0),
+                          total: s.total + 1,
+                        }));
                         }}
                         disabled={testShowResult}
                       >
@@ -552,7 +1073,7 @@ export default function Study({ selectedFolderId = null, onSelectFolderId = () =
       return (
         <div className="study-viewer">
           <div className="study-viewer-header">
-            <button type="button" className="study-viewer-back" onClick={() => setViewingItem(null)}>← Back</button>
+            <button type="button" className="study-viewer-back" onClick={() => { onBackFromItem(); setViewingItem(null); }}>← Back</button>
             {editingLectureTitleId === item.id ? (
               <>
                 <input
@@ -604,7 +1125,7 @@ export default function Study({ selectedFolderId = null, onSelectFolderId = () =
                 </button>
               </>
             )}
-            <button type="button" className="study-viewer-delete" onClick={() => { handleDeleteItem(folder.id, item.id); setViewingItem(null); }} aria-label="Delete">Delete</button>
+            <button type="button" className="study-viewer-delete" onClick={() => { handleDeleteItem(folder.id, item.id); onBackFromItem(); setViewingItem(null); }} aria-label="Delete">Delete</button>
           </div>
           <div className="study-lecture-view">
             {data.audioBase64 && (
@@ -692,9 +1213,15 @@ export default function Study({ selectedFolderId = null, onSelectFolderId = () =
     return (
       <div className="study-viewer">
         <div className="study-viewer-header">
-          <button type="button" className="study-viewer-back" onClick={() => setViewingItem(null)}>← Back</button>
-          <span className="study-viewer-title">{item.title}</span>
-          <button type="button" className="study-viewer-delete" onClick={() => { handleDeleteItem(folder.id, item.id); setViewingItem(null); }} aria-label="Delete">Delete</button>
+<button type="button" className="study-viewer-back" onClick={() => { onBackFromItem(); setViewingItem(null); }}>← Back</button>
+        <span className="study-viewer-title">{item.title}</span>
+        <button type="button" className="study-viewer-delete" onClick={() => { handleDeleteItem(folder.id, item.id); onBackFromItem(); setViewingItem(null); }} aria-label="Delete">Delete</button>
+        </div>
+        <div className="study-viewer-public-row">
+          <button type="button" className="study-public-toggle-btn" onClick={() => handleTogglePublicItem(folder.id, item.id)} disabled={publishingItemId === item.id}>
+            {publishingItemId === item.id ? 'Updating…' : item.isPublic ? 'Make private' : 'Make public'}
+          </button>
+          <span className="study-public-label">{item.isPublic ? 'Public in library' : 'Private'}</span>
         </div>
         <div className="study-guide-view">
           {sections.map((s, i) => (
@@ -806,6 +1333,12 @@ export default function Study({ selectedFolderId = null, onSelectFolderId = () =
                 )}
               </div>
               {genError && <p className="study-create-error">{genError}</p>}
+              <div className="study-create-public-toggle">
+                <label className="study-create-check">
+                  <input type="checkbox" checked={createIsPublic} onChange={(e) => setCreateIsPublic(e.target.checked)} />
+                  <span>Make created set(s) public in the shared library</span>
+                </label>
+              </div>
               <div className="study-create-actions">
                 <button type="button" className="study-btn study-btn-secondary" onClick={cancelCreate}>Cancel</button>
                 <button type="button" className="study-btn study-btn-primary" onClick={handleGenerate} disabled={!getCombinedText().trim() || isGenerating || effectiveModes.length === 0}>
@@ -940,7 +1473,8 @@ export default function Study({ selectedFolderId = null, onSelectFolderId = () =
             {selectedFolder.description && <p className="study-folder-description">{selectedFolder.description}</p>}
           </>
         )}
-        <p className="study-folder-hint">Add flashcards, study guides, practice tests, or lecture recordings.</p>
+        <p className="study-folder-hint">Add flashcards, study guides, practice tests, or lecture recordings. Publish items to the public library from each item or when creating.</p>
+        {publishError && <p className="study-create-error" role="alert">{publishError}</p>}
         <div className="study-add-buttons">
           <button type="button" className="study-btn study-btn-primary" onClick={() => { setCreateMode('flashcards'); setCreateModes(['flashcards']); }}>
             Add flashcards
@@ -951,7 +1485,23 @@ export default function Study({ selectedFolderId = null, onSelectFolderId = () =
           <button type="button" className="study-btn study-btn-primary" onClick={() => { setCreateMode('practice_test'); setCreateModes(['practice_test']); }}>
             Add practice test
           </button>
-          <button type="button" className="study-btn study-btn-secondary" onClick={() => { setLectureFlowFolderId(selectedFolderId); setGenError(null); }}>
+          <button
+            type="button"
+            className="study-btn study-btn-secondary"
+            onClick={() => {
+              const { allowed } = canCreateStudyItems(userId, subscriptionTier, 1);
+              if (!allowed) {
+                const msg = `Free plan includes ${FREE_ITEM_LIMIT_PER_WEEK} study items per week. Upgrade to Pro for unlimited items.`;
+                setGenError(msg);
+                if (typeof window !== 'undefined' && window.alert) {
+                  window.alert(msg);
+                }
+                return;
+              }
+              setLectureFlowFolderId(selectedFolderId);
+              setGenError(null);
+            }}
+          >
             Add lecture recording
           </button>
         </div>
@@ -973,11 +1523,20 @@ export default function Study({ selectedFolderId = null, onSelectFolderId = () =
                 </div>
               ) : (
                 <>
-                  <button type="button" className="study-item-card" onClick={() => setViewingItem(item)}>
+                  <button type="button" className="study-item-card" onClick={() => { setViewingItem(item); onOpenItem(selectedFolderId, item.id); }}>
                     <span className="study-item-type">{item.type === 'flashcards' ? 'Flashcards' : item.type === 'practice_test' ? 'Practice test' : item.type === 'lecture_recording' ? 'Lecture recording' : 'Study guide'}</span>
                     <span className="study-item-title">{item.title}</span>
                   </button>
                   <button type="button" className="study-item-edit" onClick={(e) => { e.stopPropagation(); setEditingItemId(item.id); setEditItemTitle(item.title); }} aria-label={`Edit ${item.title}`}>Edit</button>
+                  <button
+                    type="button"
+                    className="study-item-edit"
+                    onClick={(e) => { e.stopPropagation(); handleTogglePublicItem(selectedFolderId, item.id); }}
+                    disabled={publishingItemId === item.id}
+                    aria-label={item.isPublic ? 'Make private' : 'Make public'}
+                  >
+                    {publishingItemId === item.id ? 'Updating…' : item.isPublic ? 'Make private' : 'Make public'}
+                  </button>
                   <button type="button" className="study-item-delete" onClick={(e) => { e.stopPropagation(); handleDeleteItem(selectedFolderId, item.id); }} aria-label={`Delete ${item.title}`}>×</button>
                 </>
               )}

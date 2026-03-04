@@ -1,10 +1,16 @@
 import { useState, useRef, useEffect } from 'react';
-import { chatCompletion } from '../lib/minimax.js';
+import { useAuth } from '../context/AuthContext.jsx';
+import { chatCompletion } from '../lib/openai.js';
+import { getSubscriptionTier } from '../lib/subscription.js';
+import { canUseChat, recordChatUsage, FREE_CHAT_LIMIT_PER_WEEK } from '../lib/usageLimits.js';
 import '../css/ChatBot.css';
 
 const CHAT_SYSTEM = 'You are a friendly study and productivity assistant for MindStudy AI. You help users with study planning, focus, deadlines, and well-being. Keep replies concise and practical.';
 
 export default function ChatBot({ isLoggedIn = true, onOpenSignUp, onOpenLogIn }) {
+  const { user } = useAuth();
+  const userId = user?.id || null;
+  const tier = getSubscriptionTier(user);
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([
     { role: 'assistant', content: "Hi! I'm your MindStudy AI assistant. Ask me about planning, focus, or your study plan." },
@@ -22,6 +28,14 @@ export default function ChatBot({ isLoggedIn = true, onOpenSignUp, onOpenLogIn }
     const text = input.trim();
     if (!text || loading) return;
     setInput('');
+    const { allowed } = canUseChat(userId, tier);
+    if (!allowed) {
+      setMessages((m) => [
+        ...m,
+        { role: 'assistant', content: `You’ve reached the ${FREE_CHAT_LIMIT_PER_WEEK} chat sessions per week on the Free plan. Upgrade to Pro for unlimited chat.` },
+      ]);
+      return;
+    }
     setMessages((m) => [...m, { role: 'user', content: text }]);
     setLoading(true);
     try {
@@ -32,6 +46,7 @@ export default function ChatBot({ isLoggedIn = true, onOpenSignUp, onOpenLogIn }
       ];
       const reply = await chatCompletion(apiMessages);
       setMessages((m) => [...m, { role: 'assistant', content: reply }]);
+      recordChatUsage(userId);
     } catch (err) {
       setMessages((m) => [
         ...m,

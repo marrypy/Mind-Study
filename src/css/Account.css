@@ -111,6 +111,20 @@
   filter: brightness(1.08);
 }
 
+.account-btn-secondary {
+  background: var(--bg-muted);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.account-btn-secondary:hover {
+  filter: brightness(0.96);
+}
+
+.account-section-plan .account-value-plan {
+  font-weight: 600;
+}
+
 .account-section-danger {
   padding-top: 1.5rem;
   border-top: 1px solid var(--border);

@@ -1,14 +1,44 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
+import { getSubscriptionTier } from '../lib/subscription.js';
 import '../css/Account.css';
 
-export default function Account({ onBack }) {
-  const { user, signOut, updatePassword } = useAuth();
+export default function Account({ onBack, onGoToPricing }) {
+  const { user, signOut, updatePassword, updateUsername } = useAuth();
   const [passwordForm, setPasswordForm] = useState({ newPassword: '', confirm: '' });
   const [passwordMessage, setPasswordMessage] = useState(null);
   const [passwordLoading, setPasswordLoading] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const [deleteMessage, setDeleteMessage] = useState(null);
+  const [usernameValue, setUsernameValue] = useState(user?.user_metadata?.username || '');
+  const [usernameMessage, setUsernameMessage] = useState(null);
+  const [usernameLoading, setUsernameLoading] = useState(false);
+  const [cancelMessage, setCancelMessage] = useState(null);
+  const tier = getSubscriptionTier(user);
+  const isPro = tier === 'pro';
+
+  useEffect(() => {
+    setUsernameValue(user?.user_metadata?.username || '');
+  }, [user?.user_metadata?.username]);
+
+  async function handleChangeUsername(e) {
+    e.preventDefault();
+    setUsernameMessage(null);
+    const trimmed = (usernameValue || '').trim();
+    if (!trimmed) {
+      setUsernameMessage('Username cannot be empty.');
+      return;
+    }
+    setUsernameLoading(true);
+    try {
+      await updateUsername(trimmed);
+      setUsernameMessage('Username updated successfully.');
+    } catch (err) {
+      setUsernameMessage(err.message || 'Failed to update username.');
+    } finally {
+      setUsernameLoading(false);
+    }
+  }
 
   async function handleChangePassword(e) {
     e.preventDefault();
@@ -56,6 +86,65 @@ export default function Account({ onBack }) {
           <span className="account-label">Email</span>
           <span className="account-value">{user.email}</span>
         </div>
+
+        <div className="account-field">
+          <span className="account-label">Username</span>
+          <span className="account-value">{user.user_metadata?.username || 'Not set'}</span>
+        </div>
+
+        <section className="account-section account-section-plan">
+          <h3 className="account-section-title">Manage plan</h3>
+          <div className="account-field">
+            <span className="account-label">Active subscription</span>
+            <span className="account-value account-value-plan">{isPro ? 'Pro' : 'Free'}</span>
+          </div>
+          {isPro ? (
+            <>
+              {cancelMessage && (
+                <p className={`account-message ${cancelMessage.includes('contact') ? 'account-message--success' : 'account-message--error'}`}>
+                  {cancelMessage}
+                </p>
+              )}
+              <button
+                type="button"
+                className="account-btn account-btn-secondary"
+                onClick={() => setCancelMessage('To cancel your Pro subscription, please contact support.')}
+              >
+                Cancel subscription
+              </button>
+            </>
+          ) : (
+            <button
+              type="button"
+              className="account-btn account-btn-primary"
+              onClick={onGoToPricing}
+            >
+              Upgrade to Pro
+            </button>
+          )}
+        </section>
+
+        <section className="account-section">
+          <h3 className="account-section-title">Change username</h3>
+          <form className="account-form" onSubmit={handleChangeUsername}>
+            <input
+              type="text"
+              className="account-input"
+              placeholder="New username"
+              value={usernameValue}
+              onChange={(e) => setUsernameValue(e.target.value)}
+              autoComplete="username"
+            />
+            {usernameMessage && (
+              <p className={`account-message ${usernameMessage.includes('success') ? 'account-message--success' : 'account-message--error'}`}>
+                {usernameMessage}
+              </p>
+            )}
+            <button type="submit" className="account-btn account-btn-primary" disabled={usernameLoading}>
+              {usernameLoading ? 'Updating…' : 'Update username'}
+            </button>
+          </form>
+        </section>
 
         <section className="account-section">
           <h3 className="account-section-title">Change password</h3>

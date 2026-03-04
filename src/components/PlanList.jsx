@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getAllStudyPlans, getWeekOfMondayLabel, deleteStudyPlan } from '../lib/studyPlans.js';
+import { getAllStudyPlans, getPlanLabel, deleteStudyPlan } from '../lib/studyPlans.js';
 import '../css/PlanList.css';
 
 function fetchPlans() {
@@ -36,7 +36,7 @@ export default function PlanList({ onSelectPlan, onCreatePlan }) {
   async function handleDelete(e, row) {
     e.stopPropagation();
     if (deletingId === row.id) return;
-    if (!window.confirm(`Delete the plan for ${getWeekOfMondayLabel(row.created_at)}? This cannot be undone.`)) return;
+    if (!window.confirm(`Delete the plan for ${getPlanLabel(row)}? This cannot be undone.`)) return;
     setDeletingId(row.id);
     try {
       await deleteStudyPlan(row.id);
@@ -90,14 +90,14 @@ export default function PlanList({ onSelectPlan, onCreatePlan }) {
                 className="plan-list-week-card"
                 onClick={() => onSelectPlan(row)}
               >
-                <span className="plan-list-week-label">{getWeekOfMondayLabel(row.created_at)}</span>
+                <span className="plan-list-week-label">{getPlanLabel(row)}</span>
               </button>
               <button
                 type="button"
                 className="plan-list-week-delete"
                 onClick={(e) => handleDelete(e, row)}
                 disabled={deletingId === row.id}
-                aria-label={`Delete plan for ${getWeekOfMondayLabel(row.created_at)}`}
+                aria-label={`Delete plan for ${getPlanLabel(row)}`}
                 title="Delete plan"
               >
                 {deletingId === row.id ? '…' : '×'}

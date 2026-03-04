@@ -1,0 +1,119 @@
+.add-to-folder-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.add-to-folder-modal {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.5rem;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.add-to-folder-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 0.5rem 0;
+}
+
+.add-to-folder-item-name {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  margin: 0 0 1rem 0;
+}
+
+.add-to-folder-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.add-to-folder-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.add-to-folder-select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.add-to-folder-create-btn {
+  padding: 0.4rem 0;
+  font-size: 0.9rem;
+  color: var(--accent-lime);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.add-to-folder-create-btn:hover {
+  text-decoration: underline;
+}
+
+.add-to-folder-new {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.add-to-folder-input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.add-to-folder-new-actions,
+.add-to-folder-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.add-to-folder-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.add-to-folder-btn--primary {
+  background: var(--accent-gradient);
+  color: #fff;
+}
+
+.add-to-folder-btn--secondary {
+  background: var(--bg-muted);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.add-to-folder-message {
+  font-size: 0.9rem;
+  color: #dc2626;
+  margin: 0;
+}

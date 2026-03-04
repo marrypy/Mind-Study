@@ -60,6 +60,35 @@
   gap: 0.75rem;
 }
 
+.header-search-wrap {
+  flex: 1;
+  max-width: 360px;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.header-search-input {
+  width: 100%;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.9rem;
+  border-radius: 999px;
+}
+
+.header-search-button {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+  border-radius: 999px;
+  background: var(--accent-gradient);
+  color: #ffffff;
+  border: none;
+  white-space: nowrap;
+}
+
+.header-search-button:hover {
+  filter: brightness(1.05);
+}
+
 .app-header-back {
   flex-shrink: 0;
   width: 2rem;
@@ -190,4 +219,95 @@
   max-width: 480px;
   margin: 1.25rem auto 0;
   line-height: 1.5;
+}
+
+.static-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem 1rem 3rem;
+}
+
+.static-page-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 0.5rem 0;
+}
+
+.static-page-updated {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0 0 1.5rem 0;
+}
+
+.static-page-section {
+  margin-bottom: 1.25rem;
+}
+
+.static-page-section h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+}
+
+.static-page-section p {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.95rem;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+.static-page-section ul {
+  margin: 0.25rem 0 0.75rem 1.25rem;
+  padding: 0;
+  font-size: 0.95rem;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+.library-single-wrap {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1rem 0 3rem;
+}
+.library-single-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+.plan-public-back-btn {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.95rem;
+  background: var(--bg-muted);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  cursor: pointer;
+}
+.plan-public-back-btn:hover {
+  border-color: var(--text-muted);
+}
+.library-add-to-folder-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  background: var(--accent-gradient);
+  color: #fff;
+  cursor: pointer;
+}
+.library-add-to-folder-btn:hover {
+  filter: brightness(1.05);
+}
+.library-single-viewer {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }

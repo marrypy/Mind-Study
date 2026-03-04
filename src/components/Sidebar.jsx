@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { loadStudyData } from '../lib/studyStorage.js';
 import { getRecentlyOpened } from '../lib/recentStorage.js';
-import { getAllStudyPlans, getWeekOfMondayLabel } from '../lib/studyPlans.js';
+import { getAllStudyPlans, getPlanLabel } from '../lib/studyPlans.js';
 import '../css/Sidebar.css';
 
 export default function Sidebar({
@@ -122,7 +122,7 @@ export default function Sidebar({
                     className="sidebar-link"
                     onClick={() => onGoToPlan(row)}
                   >
-                    {getWeekOfMondayLabel(row.created_at)}
+                    {getPlanLabel(row)}
                   </button>
                 </li>
               ))}

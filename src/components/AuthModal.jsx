@@ -13,11 +13,13 @@ export default function AuthModal({ isOpen, onClose, defaultTab = 'login' }) {
     if (isOpen) setTab(defaultTab);
   }, [isOpen, defaultTab]);
   const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   if (!isOpen) return null;
 
@@ -49,10 +51,21 @@ export default function AuthModal({ isOpen, onClose, defaultTab = 'login' }) {
       setMessage({ type: 'error', text: 'Password must be at least 6 characters.' });
       return;
     }
+    if (tab === 'signup') {
+      const trimmedUsername = (username || '').trim();
+      if (!trimmedUsername) {
+        setMessage({ type: 'error', text: 'Username is required.' });
+        return;
+      }
+      if (!acceptedTerms) {
+        setMessage({ type: 'error', text: 'You must agree to the Terms & Conditions and Privacy Policy to create an account.' });
+        return;
+      }
+    }
     setLoading(true);
     try {
       if (tab === 'signup') {
-        await signUp(email, password);
+        await signUp(email, password, username);
         setMessage({ type: 'success', text: 'Account created! Check your email to confirm, or sign in below.' });
         setTab('login');
       } else {
@@ -101,6 +114,20 @@ export default function AuthModal({ isOpen, onClose, defaultTab = 'login' }) {
               autoComplete="email"
             />
           </label>
+          {tab === 'signup' && (
+            <label>
+              <span>Username</span>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Choose a username"
+                required
+                minLength={3}
+                autoComplete="username"
+              />
+            </label>
+          )}
           <label>
             <span>Password</span>
             <input
@@ -114,18 +141,34 @@ export default function AuthModal({ isOpen, onClose, defaultTab = 'login' }) {
             />
           </label>
           {tab === 'signup' && (
-            <label>
-              <span>Confirm password</span>
-              <input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-                minLength={6}
-                autoComplete="new-password"
-              />
-            </label>
+            <>
+              <label>
+                <span>Confirm password</span>
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                  minLength={6}
+                  autoComplete="new-password"
+                />
+              </label>
+              <label className="auth-modal-terms">
+                <input
+                  type="checkbox"
+                  checked={acceptedTerms}
+                  onChange={(e) => setAcceptedTerms(e.target.checked)}
+                  required
+                />
+                <span>
+                  I agree to the{' '}
+                  <a href="/terms" target="_blank" rel="noopener noreferrer">Terms &amp; Conditions</a>{' '}
+                  and{' '}
+                  <a href="/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.
+                </span>
+              </label>
+            </>
           )}
           {message.text && (
             <div className="auth-modal-message-wrap">
