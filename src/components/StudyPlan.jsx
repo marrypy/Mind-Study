@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { loadStudyData, saveStudyData, id } from '../lib/studyStorage.js';
 import { getPublicLibraryItems } from '../lib/publicLibrary.js';
+import { computeBurnoutFromContext } from '../lib/burnoutMeter.js';
 import '../css/StudyPlan.css';
 
 const DAY_ORDER = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -75,13 +76,19 @@ export default function StudyPlan({ plan, onBack, error, saveError, librarySearc
     summary,
     technique,
     techniqueDescription,
-    considerations,
-    medReminders,
-    deadlines,
     studyBlocks,
     tips,
     weeklyTimeline,
+    burnoutMeter,
+    burnoutExplanation,
   } = plan;
+
+  const burnout = useMemo(() => {
+    if (burnoutMeter && burnoutExplanation) {
+      return { ...burnoutMeter, explanation: burnoutExplanation };
+    }
+    return computeBurnoutFromContext(null, plan);
+  }, [plan, burnoutMeter, burnoutExplanation]);
 
   const [showFullTimeline, setShowFullTimeline] = useState(false);
   const [publicItems, setPublicItems] = useState([]);
@@ -183,11 +190,6 @@ export default function StudyPlan({ plan, onBack, error, saveError, librarySearc
     ? sortedTimelineDates.slice(0, 7)
     : sortedTimelineDates;
 
-  const considerationLines = [...considerations];
-  if (medReminders?.length) {
-    considerationLines.push(`Medication: ${medReminders.map((m) => m.time).join(', ')}${medReminders[0]?.note ? ` — ${medReminders[0].note}` : ''}`);
-  }
-
   const blocksByDay = (weeklyTimeline || []).reduce((acc, entry, idx) => {
     const day = normalizeDay(entry.day || '') || DAY_ORDER[idx % 7];
     if (!acc[day]) acc[day] = [];
@@ -227,43 +229,38 @@ export default function StudyPlan({ plan, onBack, error, saveError, librarySearc
         )}
       </div>
 
-      <div className="plan-two-col">
-        <section className="plan-box plan-box-considerations">
-          <h2 className="plan-box-title" style={{textDecoration: 'underline'}}>
-            Important Considerations
-          </h2>
-          <ul className="plan-box-list">
-            {considerationLines.length > 0 ? (
-              considerationLines.map((c, i) => (
-                <li key={i}>{c}</li>
-              ))
-            ) : (
-              <li>None — we've built a general plan for you.</li>
-            )}
-          </ul>
-        </section>
-        <section className="plan-box plan-box-deadlines">
-          <h2 className="plan-box-title" style={{textDecoration: 'underline'}}>
-            Upcoming Deadlines
-          </h2>
-          <ul className="plan-box-list">
-            {deadlines?.length > 0 ? (
-              deadlines.map((d, i) => (
-                <li key={i}>
-                  <span className="deadline-label">{d.label}</span>
-                  {d.suggested && <span className="deadline-tip"> — {d.suggested}</span>}
-                </li>
-              ))
-            ) : (
-              <li className="deadline-na">N/A</li>
-            )}
-          </ul>
-        </section>
-      </div>
+      <section className="plan-section plan-section-burnout" aria-label="Burnout">
+        <h2 className="plan-section-heading">Burnout</h2>
+        <div className="plan-burnout">
+          <h3 className="plan-burnout-title">Burnout risk</h3>
+          <div className="plan-burnout-meter">
+            <div
+              className="plan-burnout-bar"
+              style={{ width: `${Math.min(100, Math.max(0, burnout.score))}%` }}
+              data-level={burnout.label}
+            />
+          </div>
+          <p className="plan-burnout-label">
+            <span className="plan-burnout-label-value">{burnout.label}</span>
+            <span className="plan-burnout-label-score">({burnout.score}/100)</span>
+          </p>
+          <p className="plan-burnout-why">{burnout.explanation}</p>
+          <div className="plan-burnout-tips">
+            <h4 className="plan-burnout-tips-title">Burnout tips</h4>
+            <ul className="plan-burnout-tips-list">
+              <li>Schedule short breaks between blocks — your brain needs recovery time.</li>
+              <li>Protect sleep; cut back on sessions before bed if you’re already tired.</li>
+              <li>If the plan feels too heavy, do less and repeat — consistency beats cramming.</li>
+              <li>Say no to extra commitments when you’re close to a deadline or low on energy.</li>
+              <li>Notice when you’re pushing through exhaustion and pause instead of powering on.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
 
       <section className="plan-section plan-section-tips">
         <h2 className="plan-section-heading">
-          Tips for Success
+          Studying tips
         </h2>
         <div className="tips-grid">
           {tipCardsWithMeta.map((tip, i) => (

@@ -21,6 +21,7 @@ import ChatBot from './components/ChatBot.jsx';
 import { generatePlan } from './lib/generatePlan.js';
 import { generateStudyPlanWithAI } from './lib/openai.js';
 import { saveStudyPlan, getLatestStudyPlan, getWeekOfMondayLabel, getPlanLabel } from './lib/studyPlans.js';
+import { enrichPlanWithBurnout } from './lib/burnoutMeter.js';
 import { addRecentlyOpened } from './lib/recentStorage.js';
 import { getSubscriptionTier } from './lib/subscription.js';
 import './css/App.css';
@@ -219,7 +220,7 @@ function AppContent() {
           (p.considerations && p.considerations.length > 0) ||
           (p.weeklyTimeline && p.weeklyTimeline.length > 0) ||
           (p.studyBlocks && p.studyBlocks.length > 0);
-        if (hasContent) setPlan(p);
+        if (hasContent) setPlan(enrichPlanWithBurnout(p, row?.context ?? null));
       })
       .catch(() => {})
       .finally(() => setPlanLoading(false));
@@ -248,6 +249,7 @@ function AppContent() {
       if (context.planType === 'test' && (context.deadlines || '').trim()) {
         aiPlan.title = `${(context.deadlines).trim()} test`;
       }
+      enrichPlanWithBurnout(aiPlan, context);
       setPlan(aiPlan);
       setCameFromPlanList(false);
       if (user) {
@@ -266,6 +268,7 @@ function AppContent() {
       if (context.planType === 'test' && (context.deadlines || '').trim()) {
         fallbackPlan.title = `${(context.deadlines).trim()} test`;
       }
+      enrichPlanWithBurnout(fallbackPlan, context);
       setPlan(fallbackPlan);
       setCameFromPlanList(false);
       if (user) {
@@ -292,7 +295,7 @@ function AppContent() {
   }
 
   function handleSelectPlanFromList(row) {
-    setPlan(row.plan);
+    setPlan(enrichPlanWithBurnout(row.plan, row.context ?? null));
     setCameFromPlanList(true);
     navigate('plan');
     if (user?.id && row?.created_at) {
@@ -312,7 +315,7 @@ function AppContent() {
   }
 
   function handleGoToPlan(row) {
-    setPlan(row.plan);
+    setPlan(enrichPlanWithBurnout(row.plan, row.context ?? null));
     setCameFromPlanList(true);
     navigate('plan');
     if (user?.id) addRecentlyOpened(user.id, 'plan', row.id, getPlanLabel(row), row.plan);
@@ -323,7 +326,7 @@ function AppContent() {
       setView('study');
       setSelectedFolderId(item.id);
     } else if (item.type === 'plan' && item.plan) {
-      setPlan(item.plan);
+      setPlan(enrichPlanWithBurnout(item.plan, null));
       setCameFromPlanList(true);
       setView('plan');
     }
@@ -449,7 +452,7 @@ function AppContent() {
             }}
             onOpenPlan={(row) => {
               if (!isLoggedIn) { setAuthModalTab('signup'); setAuthModalOpen(true); return; }
-              setPlan(row.plan);
+              setPlan(enrichPlanWithBurnout(row.plan, row.context ?? null));
               setCameFromPlanList(true);
               navigate('plan');
               if (user?.id) addRecentlyOpened(user.id, 'plan', row.id, getPlanLabel(row), row.plan);

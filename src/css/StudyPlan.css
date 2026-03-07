@@ -53,6 +53,115 @@
   margin: 0;
 }
 
+/* Burnout section */
+.plan-section-burnout {
+  margin-bottom: 1.5rem;
+}
+
+.plan-section-burnout .plan-section-heading {
+  margin-bottom: 0.75rem;
+}
+
+.plan-burnout {
+  padding: 1.25rem 1.25rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.plan-burnout-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem 0;
+  color: var(--text);
+}
+
+.plan-burnout-meter {
+  height: 10px;
+  background: var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.plan-burnout-bar {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.3s ease;
+}
+
+.plan-burnout-bar[data-level="Low"] {
+  background: linear-gradient(90deg, #22c55e, #4ade80);
+}
+
+.plan-burnout-bar[data-level="Moderate"] {
+  background: linear-gradient(90deg, #eab308, #facc15);
+}
+
+.plan-burnout-bar[data-level="High"] {
+  background: linear-gradient(90deg, #f97316, #fb923c);
+}
+
+.plan-burnout-bar[data-level="Very high"] {
+  background: linear-gradient(90deg, #ef4444, #f87171);
+}
+
+.plan-burnout-bar[data-level="Unknown"] {
+  background: var(--text-muted);
+}
+
+.plan-burnout-label {
+  font-size: 0.9rem;
+  margin: 0 0 0.5rem 0;
+  color: var(--text);
+}
+
+.plan-burnout-label-value {
+  font-weight: 600;
+}
+
+.plan-burnout-label-score {
+  color: var(--text-muted);
+  font-weight: 400;
+  margin-left: 0.25rem;
+}
+
+.plan-burnout-why {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin: 0 0 1rem 0;
+  color: var(--text-muted);
+}
+
+.plan-burnout-tips {
+  border-top: 1px solid var(--border);
+  padding-top: 1rem;
+  margin-top: 0.25rem;
+}
+
+.plan-burnout-tips-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  color: var(--text);
+}
+
+.plan-burnout-tips-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.plan-burnout-tips-list li {
+  margin-bottom: 0.35rem;
+}
+
+.plan-burnout-tips-list li:last-child {
+  margin-bottom: 0;
+}
+
 /* Two-column boxes */
 .plan-two-col {
   display: grid;
