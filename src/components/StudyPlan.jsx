@@ -224,9 +224,6 @@ export default function StudyPlan({ plan, onBack, error, saveError, librarySearc
         <p className="plan-technique-description">
           {techniqueDescription || summary}
         </p>
-        {summary && techniqueDescription && (
-          <p className="plan-summary">{summary}</p>
-        )}
       </div>
 
       <section className="plan-section plan-section-burnout" aria-label="Burnout">
