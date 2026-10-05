@@ -27,7 +27,7 @@ const ALL_STEPS = [
   { id: 'week', title: "What's going on this week?" },
   { id: 'classes', title: 'What do you want to study?' },
   { id: 'goals', title: 'What are your goals?' },
-  { id: 'confidence', title: 'How confident are you? (1–10)' },
+  { id: 'confidence', title: 'How confident are you? (1â10)' },
   { id: 'deadlines', title: 'Any deadlines?' },
   { id: 'extra', title: 'Anything else we should know?' },
   { id: 'account', title: 'Save your plan to an account?' },
@@ -78,14 +78,14 @@ function StepContent({
     return (
       <div className="wizard-field wizard-plan-type">
         <div className="wizard-plan-type-options">
-          <button
+          <button aria-label="Button"
             type="button"
             className={`wizard-plan-type-btn ${planType === 'weekly' ? 'wizard-plan-type-btn--active' : ''}`}
             onClick={() => setPlanType('weekly')}
           >
             Weekly plan
           </button>
-          <button
+          <button aria-label="Button"
             type="button"
             className={`wizard-plan-type-btn ${planType === 'test' ? 'wizard-plan-type-btn--active' : ''}`}
             onClick={() => {
@@ -117,7 +117,7 @@ function StepContent({
         <p className="wizard-confidence-hint">1 = not confident at all, 10 = very confident</p>
         <div className="wizard-confidence-scale">
           {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
-            <button
+            <button aria-label="Button"
               key={n}
               type="button"
               className={`wizard-confidence-btn ${confidence === n ? 'wizard-confidence-btn--active' : ''}`}
@@ -134,15 +134,15 @@ function StepContent({
   if (stepId === 'name') {
     return (
       <div className="wizard-field">
-        <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Enter your name" className="wizard-input" />
+        <input aria-label="Field" type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Enter your name" className="wizard-input" />
       </div>
     );
   }
   if (stepId === 'mood') {
     return (
       <div className="wizard-field">
-        <select value={mood} onChange={(e) => setMood(e.target.value)}>
-          <option value="">Select your mood…</option>
+        <select aria-label="Field" value={mood} onChange={(e) => setMood(e.target.value)}>
+          <option value="">Select your moodâ¦</option>
           {MOOD_OPTIONS.map((m) => (<option key={m} value={m}>{m}</option>))}
         </select>
       </div>
@@ -153,14 +153,14 @@ function StepContent({
       <div className="wizard-fields">
         <div className="wizard-field">
           <label>
-            <span>Circumstances (sleep, stress, energy…)</span>
-            <textarea value={circumstances} onChange={(e) => setCircumstances(e.target.value)} placeholder="e.g. poor sleep, busy week, life stress…" rows={3} />
+            <span>Circumstances (sleep, stress, energyâ¦)</span>
+            <textarea aria-label="Field" value={circumstances} onChange={(e) => setCircumstances(e.target.value)} placeholder="e.g. poor sleep, busy week, life stressâ¦" rows={3} />
           </label>
         </div>
         <div className="wizard-field">
           <label>
             <span>Sickness / health (optional)</span>
-            <input type="text" value={sickness} onChange={(e) => setSickness(e.target.value)} placeholder="e.g. none, mild cold…" />
+            <input aria-label="Field" type="text" value={sickness} onChange={(e) => setSickness(e.target.value)} placeholder="e.g. none, mild coldâ¦" />
           </label>
         </div>
       </div>
@@ -169,7 +169,7 @@ function StepContent({
   if (stepId === 'mentalHealth') {
     return (
       <div className="wizard-field">
-        <textarea value={mentalHealth} onChange={(e) => setMentalHealth(e.target.value)} placeholder="e.g. ADHD, anxiety, medication timing, depression…" rows={4} />
+        <textarea aria-label="Field" value={mentalHealth} onChange={(e) => setMentalHealth(e.target.value)} placeholder="e.g. ADHD, anxiety, medication timing, depressionâ¦" rows={4} />
       </div>
     );
   }
@@ -177,13 +177,13 @@ function StepContent({
     return (
       <div className="wizard-field wizard-week">
         <p className="wizard-week-hint">Add your time commitments so we can schedule around them.</p>
-        <button
+        <button aria-label="Button"
           type="button"
           className="wizard-week-google-btn"
           onClick={onImportWeekFromCalendar}
           disabled={weekCalendarLoading || !GOOGLE_CLIENT_ID}
         >
-          {weekCalendarLoading ? 'Connecting…' : 'Connect Google Calendar'}
+          {weekCalendarLoading ? 'Connectingâ¦' : 'Connect Google Calendar'}
         </button>
         {!GOOGLE_CLIENT_ID && (
           <p className="wizard-week-google-missing">Google sign-in is not configured. Enter your plans below or add VITE_GOOGLE_CLIENT_ID to your env.</p>
@@ -193,7 +193,7 @@ function StepContent({
         )}
         <label className="wizard-week-manual">
           <span>Or enter your plans manually</span>
-          <textarea value={weekPlans} onChange={(e) => setWeekPlans(e.target.value)} placeholder="e.g. Tue 2–4 dentist, Thu evening off…" rows={4} />
+          <textarea aria-label="Field" value={weekPlans} onChange={(e) => setWeekPlans(e.target.value)} placeholder="e.g. Tue 2â4 dentist, Thu evening offâ¦" rows={4} />
         </label>
       </div>
     );
@@ -203,7 +203,7 @@ function StepContent({
       <div className="wizard-field">
         <label>
           <span>Classes or subjects</span>
-          <textarea value={classes} onChange={(e) => setClasses(e.target.value)} placeholder="e.g. Math 101, Biology, Spanish…" rows={3} />
+          <textarea aria-label="Field" value={classes} onChange={(e) => setClasses(e.target.value)} placeholder="e.g. Math 101, Biology, Spanishâ¦" rows={3} />
         </label>
       </div>
     );
@@ -213,7 +213,7 @@ function StepContent({
       <div className="wizard-field">
         <label>
           <span>What do you want to achieve?</span>
-          <textarea value={goals} onChange={(e) => setGoals(e.target.value)} placeholder="e.g. finish Ch. 3, practice problems, vocab…" rows={3} />
+          <textarea aria-label="Field" value={goals} onChange={(e) => setGoals(e.target.value)} placeholder="e.g. finish Ch. 3, practice problems, vocabâ¦" rows={3} />
         </label>
       </div>
     );
@@ -227,7 +227,7 @@ function StepContent({
           <div className="wizard-test-date-dropdowns">
             <label className="wizard-test-date-label">
               <span>Month</span>
-              <select
+              <select aria-label="Field"
                 value={testDateMonth}
                 onChange={(e) => setTestDateMonth(Number(e.target.value))}
                 className="wizard-select"
@@ -239,7 +239,7 @@ function StepContent({
             </label>
             <label className="wizard-test-date-label">
               <span>Day</span>
-              <select
+              <select aria-label="Field"
                 value={testDateDay}
                 onChange={(e) => setTestDateDay(Number(e.target.value))}
                 className="wizard-select"
@@ -251,7 +251,7 @@ function StepContent({
             </label>
             <label className="wizard-test-date-label">
               <span>Year</span>
-              <select
+              <select aria-label="Field"
                 value={testDateYear}
                 onChange={(e) => setTestDateYear(Number(e.target.value))}
                 className="wizard-select"
@@ -272,10 +272,10 @@ function StepContent({
       <div className="wizard-field">
         <label>
           <span>Deadlines</span>
-          <textarea
+          <textarea aria-label="Field"
             value={deadlines}
             onChange={(e) => setDeadlines(e.target.value)}
-            placeholder="e.g. Essay due Fri 5pm, quiz Wed 10am…"
+            placeholder="e.g. Essay due Fri 5pm, quiz Wed 10amâ¦"
             rows={3}
           />
         </label>
@@ -285,7 +285,7 @@ function StepContent({
   if (stepId === 'extra') {
     return (
       <div className="wizard-field">
-        <textarea value={extra} onChange={(e) => setExtra(e.target.value)} placeholder="Optional — anything else that might affect your plan…" rows={3} />
+        <textarea aria-label="Field" value={extra} onChange={(e) => setExtra(e.target.value)} placeholder="Optional â anything else that might affect your planâ¦" rows={3} />
       </div>
     );
   }
@@ -336,7 +336,7 @@ export default function OnboardingWizard({ onSubmit, onBack, isLoading, onOpenSi
       const is403 = msg.includes('access_denied') || msg.includes('verification') || msg.includes('403');
       setWeekCalendarError(
         is403
-          ? 'This app is in testing mode. Add your email as a test user in Google Cloud Console (APIs & Services → OAuth consent screen → Test users), or enter your plans manually below.'
+          ? 'This app is in testing mode. Add your email as a test user in Google Cloud Console (APIs & Services â OAuth consent screen â Test users), or enter your plans manually below.'
           : (msg || 'Could not load calendar. Try entering manually below.')
       );
     } finally {
@@ -452,8 +452,8 @@ export default function OnboardingWizard({ onSubmit, onBack, isLoading, onOpenSi
             </div>
           ))}
           <div className="wizard-actions">
-            <button type="button" className="btn-secondary" onClick={handleBack}>← Back</button>
-            <button type="submit" className="btn-primary" disabled={isLoading}>{isLoading ? 'Building your plan…' : 'Generate my plan'}</button>
+            <button type="button" className="btn-secondary" onClick={handleBack}>â Back</button>
+            <button type="submit" className="btn-primary" disabled={isLoading}>{isLoading ? 'Building your planâ¦' : 'Generate my plan'}</button>
           </div>
         </form>
         <p className="wizard-footer-note">All your data stays private.</p>
@@ -476,11 +476,11 @@ export default function OnboardingWizard({ onSubmit, onBack, isLoading, onOpenSi
         </h2>
         <StepContent stepId={step.id} {...stepContentProps} />
         <div className="wizard-actions">
-          <button type="button" className="btn-secondary" onClick={handleBack}>
+          <button aria-label="Button" type="button" className="btn-secondary" onClick={handleBack}>
             {isFirst ? 'Back' : 'Previous'}
           </button>
-          <button type="submit" className="btn-primary" disabled={isLoading && isLast}>
-            {isLoading && isLast ? 'Building your plan…' : isLast ? 'Generate my plan' : 'Next'}
+          <button aria-label="Button" type="submit" className="btn-primary" disabled={isLoading && isLast}>
+            {isLoading && isLast ? 'Building your planâ¦' : isLast ? 'Generate my plan' : 'Next'}
           </button>
         </div>
       </form>
