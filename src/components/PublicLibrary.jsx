@@ -62,7 +62,7 @@ export default function PublicLibrary({
     if (singleLoading) {
       return (
         <div className="library-single-wrap">
-          <p className="plan-public-loading">Loading…</p>
+          <p className="plan-public-loading">Loadingâ¦</p>
         </div>
       );
     }
@@ -70,14 +70,14 @@ export default function PublicLibrary({
       return (
         <div className="library-single-wrap">
           <p className="plan-public-error" role="alert">{singleError || 'Item not found.'}</p>
-          <button type="button" className="plan-public-back-btn" onClick={onBackToList}>← Back to library</button>
+          <button type="button" className="plan-public-back-btn" onClick={onBackToList}>â Back to library</button>
         </div>
       );
     }
     return (
       <div className="library-single-wrap">
         <div className="library-single-toolbar">
-          <button type="button" className="plan-public-back-btn" onClick={onBackToList}>← Back to library</button>
+          <button type="button" className="plan-public-back-btn" onClick={onBackToList}>â Back to library</button>
           {isLoggedIn ? (
             <button type="button" className="library-add-to-folder-btn" onClick={() => onAddToFolder?.(singleItem)}>Add to folder</button>
           ) : (
@@ -109,7 +109,7 @@ export default function PublicLibrary({
 
       <section className="plan-section plan-section-public-library">
         {error && <p className="plan-public-error" role="alert">{error}</p>}
-        {loading && <p className="plan-public-loading">Loading…</p>}
+        {loading && <p className="plan-public-loading">Loadingâ¦</p>}
         {!loading && !error && items.length === 0 && (
           <p className="plan-public-empty">No public items found. Try a different search.</p>
         )}
@@ -120,14 +120,14 @@ export default function PublicLibrary({
               <div className="plan-public-group">
                 <h2 className="plan-section-heading">Flashcards</h2>
                 <div className="plan-public-row">
-                  <button
+                  <button aria-label="Button"
                     type="button"
                     className="plan-public-scroll-btn"
                     onClick={() => scrollRow(flashRef, -1)}
                     aria-label="Scroll left"
                     disabled={flashcards.length <= 3}
                   >
-                    ‹
+                    â¹
                   </button>
                   <ul className="plan-public-grid" ref={flashRef}>
                   {flashcards.map((item) => (
@@ -151,14 +151,14 @@ export default function PublicLibrary({
                     </li>
                   ))}
                   </ul>
-                  <button
+                  <button aria-label="Button"
                     type="button"
                     className="plan-public-scroll-btn"
                     onClick={() => scrollRow(flashRef, 1)}
                     aria-label="Scroll right"
                     disabled={flashcards.length <= 3}
                   >
-                    ›
+                    âº
                   </button>
                 </div>
               </div>
@@ -167,14 +167,14 @@ export default function PublicLibrary({
               <div className="plan-public-group">
                 <h2 className="plan-section-heading">Study guides</h2>
                 <div className="plan-public-row">
-                  <button
+                  <button aria-label="Button"
                     type="button"
                     className="plan-public-scroll-btn"
                     onClick={() => scrollRow(guideRef, -1)}
                     aria-label="Scroll left"
                     disabled={guides.length <= 3}
                   >
-                    ‹
+                    â¹
                   </button>
                   <ul className="plan-public-grid" ref={guideRef}>
                   {guides.map((item) => (
@@ -198,14 +198,14 @@ export default function PublicLibrary({
                     </li>
                   ))}
                   </ul>
-                  <button
+                  <button aria-label="Button"
                     type="button"
                     className="plan-public-scroll-btn"
                     onClick={() => scrollRow(guideRef, 1)}
                     aria-label="Scroll right"
                     disabled={guides.length <= 3}
                   >
-                    ›
+                    âº
                   </button>
                 </div>
               </div>
@@ -214,14 +214,14 @@ export default function PublicLibrary({
               <div className="plan-public-group">
                 <h2 className="plan-section-heading">Practice tests</h2>
                 <div className="plan-public-row">
-                  <button
+                  <button aria-label="Button"
                     type="button"
                     className="plan-public-scroll-btn"
                     onClick={() => scrollRow(testRef, -1)}
                     aria-label="Scroll left"
                     disabled={tests.length <= 3}
                   >
-                    ‹
+                    â¹
                   </button>
                   <ul className="plan-public-grid" ref={testRef}>
                   {tests.map((item) => (
@@ -245,14 +245,14 @@ export default function PublicLibrary({
                     </li>
                   ))}
                   </ul>
-                  <button
+                  <button aria-label="Button"
                     type="button"
                     className="plan-public-scroll-btn"
                     onClick={() => scrollRow(testRef, 1)}
                     aria-label="Scroll right"
                     disabled={tests.length <= 3}
                   >
-                    ›
+                    âº
                   </button>
                 </div>
               </div>
