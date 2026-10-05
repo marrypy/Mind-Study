@@ -32,7 +32,7 @@ export default function ChatBot({ isLoggedIn = true, onOpenSignUp, onOpenLogIn }
     if (!allowed) {
       setMessages((m) => [
         ...m,
-        { role: 'assistant', content: `You’ve reached the ${FREE_CHAT_LIMIT_PER_WEEK} chat sessions per week on the Free plan. Upgrade to Pro for unlimited chat.` },
+        { role: 'assistant', content: `Youâve reached the ${FREE_CHAT_LIMIT_PER_WEEK} chat sessions per week on the Free plan. Upgrade to Pro for unlimited chat.` },
       ]);
       return;
     }
@@ -59,7 +59,7 @@ export default function ChatBot({ isLoggedIn = true, onOpenSignUp, onOpenLogIn }
 
   return (
     <>
-      <button
+      <button aria-label="Button"
         type="button"
         className="chatbot-fab"
         onClick={() => setOpen((o) => !o)}
@@ -92,19 +92,19 @@ export default function ChatBot({ isLoggedIn = true, onOpenSignUp, onOpenLogIn }
               ))}
               {loading && (
                 <div className="chatbot-msg chatbot-msg--assistant chatbot-msg--loading">
-                  …
+                  â¦
                 </div>
               )}
             </div>
             <form className="chatbot-form" onSubmit={handleSend}>
-              <input
+              <input aria-label="Field"
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask anything…"
+                placeholder="Ask anythingâ¦"
                 disabled={loading}
               />
-              <button type="submit" disabled={loading || !input.trim()}>
+              <button aria-label="Button" type="submit" disabled={loading || !input.trim()}>
                 Send
               </button>
             </form>
@@ -113,10 +113,10 @@ export default function ChatBot({ isLoggedIn = true, onOpenSignUp, onOpenLogIn }
                 <div className="chatbot-login-gate">
                   <p className="chatbot-login-text">Log in or sign up to chat with the assistant.</p>
                   <div className="chatbot-login-actions">
-                    <button type="button" className="chatbot-login-btn chatbot-login-btn--primary" onClick={onOpenSignUp}>
+                    <button aria-label="Button" type="button" className="chatbot-login-btn chatbot-login-btn--primary" onClick={onOpenSignUp}>
                       Sign up
                     </button>
-                    <button type="button" className="chatbot-login-btn chatbot-login-btn--secondary" onClick={onOpenLogIn}>
+                    <button aria-label="Button" type="button" className="chatbot-login-btn chatbot-login-btn--secondary" onClick={onOpenLogIn}>
                       Log in
                     </button>
                   </div>
