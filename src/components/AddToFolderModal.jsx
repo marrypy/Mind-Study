@@ -76,7 +76,7 @@ export default function AddToFolderModal({ item, userId: userIdProp, onClose, on
         <p className="add-to-folder-item-name">{item.title}</p>
         <div className="add-to-folder-form">
           <label className="add-to-folder-label">Choose a class folder</label>
-          <select
+          <select aria-label="Field"
             className="add-to-folder-select"
             value={selectedFolderId}
             onChange={(e) => setSelectedFolderId(e.target.value)}
@@ -85,28 +85,28 @@ export default function AddToFolderModal({ item, userId: userIdProp, onClose, on
             {folders.map((f) => (
               <option key={f.id} value={f.id}>{f.name}</option>
             ))}
-            {folders.length === 0 && <option value="">(No folders yet — create one below)</option>}
+            {folders.length === 0 && <option value="">(No folders yet â create one below)</option>}
           </select>
           {!showCreate ? (
-            <button type="button" className="add-to-folder-create-btn" onClick={() => setShowCreate(true)}>
+            <button aria-label="Button" type="button" className="add-to-folder-create-btn" onClick={() => setShowCreate(true)}>
               + Create new folder
             </button>
           ) : (
             <div className="add-to-folder-new">
-              <input
+              <input aria-label="Field"
                 type="text"
                 className="add-to-folder-input"
                 placeholder="Folder name (e.g. Biology 101)"
                 value={newFolderName}
                 onChange={(e) => setNewFolderName(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter') handleCreateFolder(); }}
-                autoFocus
+               
               />
               <div className="add-to-folder-new-actions">
-                <button type="button" className="add-to-folder-btn add-to-folder-btn--primary" onClick={handleCreateFolder} disabled={!newFolderName.trim()}>
+                <button aria-label="Button" type="button" className="add-to-folder-btn add-to-folder-btn--primary" onClick={handleCreateFolder} disabled={!newFolderName.trim()}>
                   Create &amp; use
                 </button>
-                <button type="button" className="add-to-folder-btn add-to-folder-btn--secondary" onClick={() => { setShowCreate(false); setNewFolderName(''); }}>
+                <button aria-label="Button" type="button" className="add-to-folder-btn add-to-folder-btn--secondary" onClick={() => { setShowCreate(false); setNewFolderName(''); }}>
                   Cancel
                 </button>
               </div>
@@ -114,10 +114,10 @@ export default function AddToFolderModal({ item, userId: userIdProp, onClose, on
           )}
           {message && <p className="add-to-folder-message">{message}</p>}
           <div className="add-to-folder-actions">
-            <button type="button" className="add-to-folder-btn add-to-folder-btn--primary" onClick={handleAdd}>
+            <button aria-label="Button" type="button" className="add-to-folder-btn add-to-folder-btn--primary" onClick={handleAdd}>
               Add to folder
             </button>
-            <button type="button" className="add-to-folder-btn add-to-folder-btn--secondary" onClick={onClose}>
+            <button aria-label="Button" type="button" className="add-to-folder-btn add-to-folder-btn--secondary" onClick={onClose}>
               Cancel
             </button>
           </div>

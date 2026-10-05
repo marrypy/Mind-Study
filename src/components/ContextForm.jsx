@@ -38,8 +38,8 @@ export default function ContextForm({ onSubmit, isLoading }) {
         <h2>How you're doing</h2>
         <label>
           <span>Mood</span>
-          <select value={mood} onChange={(e) => setMood(e.target.value)}>
-            <option value="">Select…</option>
+          <select aria-label="Field" value={mood} onChange={(e) => setMood(e.target.value)}>
+            <option value="">Selectâ¦</option>
             {MOOD_OPTIONS.map((m) => (
               <option key={m} value={m}>{m}</option>
             ))}
@@ -47,20 +47,20 @@ export default function ContextForm({ onSubmit, isLoading }) {
         </label>
         <label>
           <span>Circumstances (anything that affects focus or energy)</span>
-          <textarea
+          <textarea aria-label="Field"
             value={circumstances}
             onChange={(e) => setCircumstances(e.target.value)}
-            placeholder="e.g. poor sleep, busy week, life stress, energy level…"
+            placeholder="e.g. poor sleep, busy week, life stress, energy levelâ¦"
             rows={3}
           />
         </label>
         <label>
           <span>Sickness / health</span>
-          <input
+          <input aria-label="Field"
             type="text"
             value={sickness}
             onChange={(e) => setSickness(e.target.value)}
-            placeholder="e.g. none, mild cold, recovering…"
+            placeholder="e.g. none, mild cold, recoveringâ¦"
           />
         </label>
       </section>
@@ -68,7 +68,7 @@ export default function ContextForm({ onSubmit, isLoading }) {
       <section className="form-section">
         <h2>ADHD & medication (optional)</h2>
         <label className="checkbox-label">
-          <input
+          <input aria-label="Field"
             type="checkbox"
             checked={hasAdhd}
             onChange={(e) => setHasAdhd(e.target.checked)}
@@ -79,7 +79,7 @@ export default function ContextForm({ onSubmit, isLoading }) {
           <>
             <label>
               <span>Medication times (e.g. 8:00, 14:00)</span>
-              <input
+              <input aria-label="Field"
                 type="text"
                 value={medTimes}
                 onChange={(e) => setMedTimes(e.target.value)}
@@ -88,7 +88,7 @@ export default function ContextForm({ onSubmit, isLoading }) {
             </label>
             <label>
               <span>Notes (e.g. with food, avoid caffeine)</span>
-              <input
+              <input aria-label="Field"
                 type="text"
                 value={medNotes}
                 onChange={(e) => setMedNotes(e.target.value)}
@@ -103,10 +103,10 @@ export default function ContextForm({ onSubmit, isLoading }) {
         <h2>Your week & schedule</h2>
         <label>
           <span>Plans or commitments this week</span>
-          <textarea
+          <textarea aria-label="Field"
             value={weekPlans}
             onChange={(e) => setWeekPlans(e.target.value)}
-            placeholder="e.g. Tue 2–4 dentist, Thu evening off…"
+            placeholder="e.g. Tue 2â4 dentist, Thu evening offâ¦"
             rows={2}
           />
         </label>
@@ -116,36 +116,36 @@ export default function ContextForm({ onSubmit, isLoading }) {
         <h2>What to study</h2>
         <label>
           <span>Classes or subjects</span>
-          <textarea
+          <textarea aria-label="Field"
             value={classes}
             onChange={(e) => setClasses(e.target.value)}
-            placeholder="e.g. Math 101, Biology, Spanish…"
+            placeholder="e.g. Math 101, Biology, Spanishâ¦"
             rows={2}
           />
         </label>
         <label>
           <span>Goals (what you want to achieve)</span>
-          <textarea
+          <textarea aria-label="Field"
             value={goals}
             onChange={(e) => setGoals(e.target.value)}
-            placeholder="e.g. finish Ch. 3, practice problems, vocab…"
+            placeholder="e.g. finish Ch. 3, practice problems, vocabâ¦"
             rows={2}
           />
         </label>
         <label>
           <span>Deadlines</span>
-          <textarea
+          <textarea aria-label="Field"
             value={deadlines}
             onChange={(e) => setDeadlines(e.target.value)}
-            placeholder="e.g. Essay due Fri 5pm, quiz Wed 10am…"
+            placeholder="e.g. Essay due Fri 5pm, quiz Wed 10amâ¦"
             rows={2}
           />
         </label>
       </section>
 
       <div className="form-actions">
-        <button type="submit" className="btn-primary" disabled={isLoading}>
-          {isLoading ? 'Building your plan…' : 'Generate study plan'}
+        <button aria-label="Button" type="submit" className="btn-primary" disabled={isLoading}>
+          {isLoading ? 'Building your planâ¦' : 'Generate study plan'}
         </button>
       </div>
     </form>

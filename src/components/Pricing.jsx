@@ -15,8 +15,8 @@ export default function Pricing({ onBack, isLoggedIn, isSubscribed, onSignUpClic
     >
       {onBack && (
         <div className="pricing-back-wrap">
-          <button type="button" className="pricing-back-btn" onClick={onBack}>
-            ← Back
+          <button aria-label="Button" type="button" className="pricing-back-btn" onClick={onBack}>
+            â Back
           </button>
         </div>
       )}
@@ -32,7 +32,7 @@ export default function Pricing({ onBack, isLoggedIn, isSubscribed, onSignUpClic
         </p>
 
         <div className="landing-pricing-toggle">
-          <button
+          <button aria-label="Button"
             type="button"
             className={`landing-pricing-toggle-btn ${
               isMonthly ? 'landing-pricing-toggle-btn--active' : ''
@@ -41,7 +41,7 @@ export default function Pricing({ onBack, isLoggedIn, isSubscribed, onSignUpClic
           >
             Monthly
           </button>
-          <button
+          <button aria-label="Button"
             type="button"
             className={`landing-pricing-toggle-btn ${
               !isMonthly ? 'landing-pricing-toggle-btn--active' : ''
@@ -87,16 +87,16 @@ export default function Pricing({ onBack, isLoggedIn, isSubscribed, onSignUpClic
         <div className="landing-pricing-cta">
           {isLoggedIn ? (
             isSubscribed ? (
-              <button type="button" className="pricing-cta-btn pricing-cta-btn--subscribed" disabled>
+              <button aria-label="Button" type="button" className="pricing-cta-btn pricing-cta-btn--subscribed" disabled>
                 Subscribed
               </button>
             ) : (
-              <button type="button" className="pricing-cta-btn pricing-cta-btn--primary">
+              <button aria-label="Button" type="button" className="pricing-cta-btn pricing-cta-btn--primary">
                 Subscribe
               </button>
             )
           ) : (
-            <button
+            <button aria-label="Button"
               type="button"
               className="pricing-cta-btn pricing-cta-btn--primary"
               onClick={onSignUpClick}

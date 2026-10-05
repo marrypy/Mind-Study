@@ -70,7 +70,7 @@ export default function Account({ onBack, onGoToPricing }) {
       setDeleteMessage(null);
       return;
     }
-    setDeleteMessage('Account deletion must be done from your Supabase project (Dashboard → Authentication → Users). You have been signed out.');
+    setDeleteMessage('Account deletion must be done from your Supabase project (Dashboard â Authentication â Users). You have been signed out.');
     await signOut();
     onBack?.();
   }
@@ -105,7 +105,7 @@ export default function Account({ onBack, onGoToPricing }) {
                   {cancelMessage}
                 </p>
               )}
-              <button
+              <button aria-label="Button"
                 type="button"
                 className="account-btn account-btn-secondary"
                 onClick={() => setCancelMessage('To cancel your Pro subscription, please contact support.')}
@@ -114,7 +114,7 @@ export default function Account({ onBack, onGoToPricing }) {
               </button>
             </>
           ) : (
-            <button
+            <button aria-label="Button"
               type="button"
               className="account-btn account-btn-primary"
               onClick={onGoToPricing}
@@ -127,7 +127,7 @@ export default function Account({ onBack, onGoToPricing }) {
         <section className="account-section">
           <h3 className="account-section-title">Change username</h3>
           <form className="account-form" onSubmit={handleChangeUsername}>
-            <input
+            <input aria-label="Field"
               type="text"
               className="account-input"
               placeholder="New username"
@@ -140,8 +140,8 @@ export default function Account({ onBack, onGoToPricing }) {
                 {usernameMessage}
               </p>
             )}
-            <button type="submit" className="account-btn account-btn-primary" disabled={usernameLoading}>
-              {usernameLoading ? 'Updating…' : 'Update username'}
+            <button aria-label="Button" type="submit" className="account-btn account-btn-primary" disabled={usernameLoading}>
+              {usernameLoading ? 'Updatingâ¦' : 'Update username'}
             </button>
           </form>
         </section>
@@ -149,7 +149,7 @@ export default function Account({ onBack, onGoToPricing }) {
         <section className="account-section">
           <h3 className="account-section-title">Change password</h3>
           <form className="account-form" onSubmit={handleChangePassword}>
-            <input
+            <input aria-label="Field"
               type="password"
               className="account-input"
               placeholder="New password"
@@ -157,7 +157,7 @@ export default function Account({ onBack, onGoToPricing }) {
               onChange={(e) => setPasswordForm((p) => ({ ...p, newPassword: e.target.value }))}
               autoComplete="new-password"
             />
-            <input
+            <input aria-label="Field"
               type="password"
               className="account-input"
               placeholder="Confirm new password"
@@ -170,8 +170,8 @@ export default function Account({ onBack, onGoToPricing }) {
                 {passwordMessage}
               </p>
             )}
-            <button type="submit" className="account-btn account-btn-primary" disabled={passwordLoading}>
-              {passwordLoading ? 'Updating…' : 'Update password'}
+            <button aria-label="Button" type="submit" className="account-btn account-btn-primary" disabled={passwordLoading}>
+              {passwordLoading ? 'Updatingâ¦' : 'Update password'}
             </button>
           </form>
         </section>
@@ -182,10 +182,10 @@ export default function Account({ onBack, onGoToPricing }) {
             Permanently delete your account and all associated data. This cannot be undone.
           </p>
           {deleteConfirm && (
-            <p className="account-delete-warn">Click again to sign out. To fully delete your account, use Supabase Dashboard → Authentication → Users.</p>
+            <p className="account-delete-warn">Click again to sign out. To fully delete your account, use Supabase Dashboard â Authentication â Users.</p>
           )}
           {deleteMessage && <p className="account-message account-message--error">{deleteMessage}</p>}
-          <button
+          <button aria-label="Button"
             type="button"
             className="account-btn account-btn-danger"
             onClick={handleDeleteClick}
@@ -196,8 +196,8 @@ export default function Account({ onBack, onGoToPricing }) {
       </div>
 
       {onBack && (
-        <button type="button" className="account-back" onClick={onBack}>
-          ← Back
+        <button aria-label="Button" type="button" className="account-back" onClick={onBack}>
+          â Back
         </button>
       )}
     </div>

@@ -746,7 +746,7 @@ export default function Study({
           return (
             <div className="study-viewer">
               <div className="study-viewer-header">
-                <button
+                <button aria-label="Button"
                   type="button"
                   className="study-viewer-back"
                   onClick={() => {
@@ -755,9 +755,9 @@ export default function Study({
                     setViewingItem(null);
                   }}
                 >
-                  ← Back
+                  â Back
                 </button>
-                <span className="study-viewer-title">{item.title} — Practice</span>
+                <span className="study-viewer-title">{item.title} â Practice</span>
               </div>
               <div className="study-practice-summary">
                 <h3>Round {flashPracticeRound} summary</h3>
@@ -766,7 +766,7 @@ export default function Study({
                   {pct}
                   % correct)
                 </p>
-                <button
+                <button aria-label="Button"
                   type="button"
                   className="study-btn study-btn-primary"
                   onClick={() => {
@@ -792,7 +792,7 @@ export default function Study({
           return (
             <div className="study-viewer">
               <div className="study-viewer-header">
-                <button
+                <button aria-label="Button"
                   type="button"
                   className="study-viewer-back"
                   onClick={() => {
@@ -801,9 +801,9 @@ export default function Study({
                     setViewingItem(null);
                   }}
                 >
-                  ← Back
+                  â Back
                 </button>
-                <span className="study-viewer-title">{item.title} — Practice complete</span>
+                <span className="study-viewer-title">{item.title} â Practice complete</span>
               </div>
               <div className="study-practice-summary">
                 <h3>Nice work!</h3>
@@ -817,14 +817,14 @@ export default function Study({
                   )}
                 </p>
                 <div className="study-practice-actions">
-                  <button
+                  <button aria-label="Button"
                     type="button"
                     className="study-btn study-btn-primary"
                     onClick={() => startFlashPractice(totalCards)}
                   >
                     Restart practice
                   </button>
-                  <button
+                  <button aria-label="Button"
                     type="button"
                     className="study-btn study-btn-secondary"
                     onClick={() => {
@@ -846,7 +846,7 @@ export default function Study({
         return (
           <div className="study-viewer">
             <div className="study-viewer-header">
-              <button
+              <button aria-label="Button"
                 type="button"
                 className="study-viewer-back"
                 onClick={() => {
@@ -855,17 +855,17 @@ export default function Study({
                   setViewingItem(null);
                 }}
               >
-                ← Back
+                â Back
               </button>
-              <span className="study-viewer-title">{item.title} — Practice</span>
+              <span className="study-viewer-title">{item.title} â Practice</span>
               <span className="study-viewer-nav">
-                Round {flashPracticeRound} · Card {flashPracticeIndex + 1} / {flashPracticeQueue.length}
+                Round {flashPracticeRound} Â· Card {flashPracticeIndex + 1} / {flashPracticeQueue.length}
               </span>
             </div>
             <div className="study-flashcard-wrap">
               {practiceCardToShow ? (
                 <>
-                  <button
+                  <button aria-label="Button"
                     type="button"
                     className="study-flashcard"
                     onClick={() => setFlashcardFlipped((f) => !f)}
@@ -878,14 +878,14 @@ export default function Study({
                     </p>
                   </button>
                   <div className="study-practice-buttons">
-                    <button
+                    <button aria-label="Button"
                       type="button"
                       className="study-btn study-btn-secondary"
                       onClick={() => handleFlashPracticeAnswer(false)}
                     >
                       Wrong
                     </button>
-                    <button
+                    <button aria-label="Button"
                       type="button"
                       className="study-btn study-btn-primary"
                       onClick={() => handleFlashPracticeAnswer(true)}
@@ -905,23 +905,23 @@ export default function Study({
       return (
         <div className="study-viewer">
           <div className="study-viewer-header">
-            <button type="button" className="study-viewer-back" onClick={() => { onBackFromItem(); setViewingItem(null); setFlashcardIndex(0); setFlashcardFlipped(false); }}>
-              ← Back
+            <button aria-label="Button" type="button" className="study-viewer-back" onClick={() => { onBackFromItem(); setViewingItem(null); setFlashcardIndex(0); setFlashcardFlipped(false); }}>
+              â Back
             </button>
             <span className="study-viewer-title">{item.title}</span>
             <span className="study-viewer-nav">{idx + 1} / {cards.length}</span>
             <button type="button" className="study-viewer-delete" onClick={() => { handleDeleteItem(folder.id, item.id); onBackFromItem(); setViewingItem(null); setFlashcardIndex(0); setFlashcardFlipped(false); }} aria-label="Delete">Delete</button>
           </div>
           <div className="study-viewer-public-row">
-            <button type="button" className="study-public-toggle-btn" onClick={() => handleTogglePublicItem(folder.id, item.id)} disabled={publishingItemId === item.id}>
-              {publishingItemId === item.id ? 'Updating…' : item.isPublic ? 'Make private' : 'Make public'}
+            <button aria-label="Button" type="button" className="study-public-toggle-btn" onClick={() => handleTogglePublicItem(folder.id, item.id)} disabled={publishingItemId === item.id}>
+              {publishingItemId === item.id ? 'Updatingâ¦' : item.isPublic ? 'Make private' : 'Make public'}
             </button>
             <span className="study-public-label">{item.isPublic ? 'Public in library' : 'Private'}</span>
           </div>
           <div className="study-flashcard-wrap">
             {card ? (
               <>
-                <button
+                <button aria-label="Button"
                   type="button"
                   className="study-flashcard"
                   onClick={() => setFlashcardFlipped((f) => !f)}
@@ -934,7 +934,7 @@ export default function Study({
                   <button type="button" disabled={idx >= cards.length - 1} onClick={() => { setFlashcardIndex(idx + 1); setFlashcardFlipped(false); }}>Next</button>
                 </div>
                 <div className="study-practice-start">
-                  <button
+                  <button aria-label="Button"
                     type="button"
                     className="study-btn study-btn-primary"
                     onClick={() => startFlashPractice(cards.length)}
@@ -962,14 +962,14 @@ export default function Study({
       return (
         <div className="study-viewer">
           <div className="study-viewer-header">
-            <button type="button" className="study-viewer-back" onClick={() => { onBackFromItem(); setViewingItem(null); setTestQuestionIndex(0); setTestSelected(null); setTestShowResult(false); setTestScore({ correct: 0, total: 0 }); }}>← Back</button>
+            <button type="button" className="study-viewer-back" onClick={() => { onBackFromItem(); setViewingItem(null); setTestQuestionIndex(0); setTestSelected(null); setTestShowResult(false); setTestScore({ correct: 0, total: 0 }); }}>â Back</button>
             <span className="study-viewer-title">{item.title}</span>
             {!showScore && total > 0 && <span className="study-viewer-nav">{Math.min(idx + 1, total)} / {total}</span>}
             <button type="button" className="study-viewer-delete" onClick={() => { handleDeleteItem(folder.id, item.id); onBackFromItem(); setViewingItem(null); setTestQuestionIndex(0); setTestSelected(null); setTestShowResult(false); setTestScore({ correct: 0, total: 0 }); }} aria-label="Delete">Delete</button>
           </div>
           <div className="study-viewer-public-row">
-            <button type="button" className="study-public-toggle-btn" onClick={() => handleTogglePublicItem(folder.id, item.id)} disabled={publishingItemId === item.id}>
-              {publishingItemId === item.id ? 'Updating…' : item.isPublic ? 'Make private' : 'Make public'}
+            <button aria-label="Button" type="button" className="study-public-toggle-btn" onClick={() => handleTogglePublicItem(folder.id, item.id)} disabled={publishingItemId === item.id}>
+              {publishingItemId === item.id ? 'Updatingâ¦' : item.isPublic ? 'Make private' : 'Make public'}
             </button>
             <span className="study-public-label">{item.isPublic ? 'Public in library' : 'Private'}</span>
           </div>
@@ -990,7 +990,7 @@ export default function Study({
                     %
                   </p>
                   <div className="study-practice-actions">
-                    <button
+                    <button aria-label="Button"
                       type="button"
                       className="study-btn study-btn-primary"
                       onClick={() => {
@@ -1002,7 +1002,7 @@ export default function Study({
                     >
                       Restart test
                     </button>
-                    <button
+                    <button aria-label="Button"
                       type="button"
                       className="study-btn study-btn-secondary"
                       onClick={() => {
@@ -1032,7 +1032,7 @@ export default function Study({
                     const showRight = testShowResult && correct;
                     const showWrong = testShowResult && selected && !correct;
                     return (
-                      <button
+                      <button aria-label="Button"
                         key={i}
                         type="button"
                         className={`study-test-option ${showRight ? 'study-test-option--correct' : ''} ${showWrong ? 'study-test-option--wrong' : ''}`}
@@ -1073,10 +1073,10 @@ export default function Study({
       return (
         <div className="study-viewer">
           <div className="study-viewer-header">
-            <button type="button" className="study-viewer-back" onClick={() => { onBackFromItem(); setViewingItem(null); }}>← Back</button>
+            <button type="button" className="study-viewer-back" onClick={() => { onBackFromItem(); setViewingItem(null); }}>â Back</button>
             {editingLectureTitleId === item.id ? (
               <>
-                <input
+                <input aria-label="Field"
                   type="text"
                   className="study-folder-input"
                   value={editingLectureTitleValue}
@@ -1090,16 +1090,16 @@ export default function Study({
                       setEditingLectureTitleId(null);
                     }
                   }}
-                  autoFocus
+                 
                 />
-                <button
+                <button aria-label="Button"
                   type="button"
                   className="study-btn study-btn-secondary"
                   onClick={() => setEditingLectureTitleId(null)}
                 >
                   Cancel
                 </button>
-                <button
+                <button aria-label="Button"
                   type="button"
                   className="study-btn study-btn-primary"
                   onClick={() => {
@@ -1113,7 +1113,7 @@ export default function Study({
             ) : (
               <>
                 <span className="study-viewer-title">{item.title}</span>
-                <button
+                <button aria-label="Button"
                   type="button"
                   className="study-folder-edit-btn"
                   onClick={() => {
@@ -1130,7 +1130,7 @@ export default function Study({
           <div className="study-lecture-view">
             {data.audioBase64 && (
               <div className="study-lecture-audio-row">
-                <button type="button" className="study-btn study-btn-primary" onClick={() => playRecordingAudio(data, item.id)}>
+                <button aria-label="Button" type="button" className="study-btn study-btn-primary" onClick={() => playRecordingAudio(data, item.id)}>
                   {playingId === item.id ? 'Pause' : 'Play'} recording
                 </button>
               </div>
@@ -1164,15 +1164,15 @@ export default function Study({
               <>
                 <p className="study-main-hint">Review or edit the transcript below, then generate summary and notes.</p>
                 <div className="study-lecture-transcript-row">
-                  <textarea
+                  <textarea aria-label="Field"
                     className="study-create-textarea"
-                    placeholder="Transcript from the recording…"
+                    placeholder="Transcript from the recordingâ¦"
                     value={transcriptForView}
                     onChange={(e) => setViewingLectureTranscript(e.target.value)}
                     rows={6}
                   />
                   <div className="study-recordings-actions">
-                    <button
+                    <button aria-label="Button"
                       type="button"
                       className="study-btn study-btn-primary"
                       onClick={async () => {
@@ -1196,7 +1196,7 @@ export default function Study({
                       }}
                       disabled={isGeneratingSummary || !(viewingLectureTranscript || '').trim()}
                     >
-                      {isGeneratingSummary ? 'Generating…' : 'Generate summary & notes'}
+                      {isGeneratingSummary ? 'Generatingâ¦' : 'Generate summary & notes'}
                     </button>
                   </div>
                 </div>
@@ -1213,13 +1213,13 @@ export default function Study({
     return (
       <div className="study-viewer">
         <div className="study-viewer-header">
-<button type="button" className="study-viewer-back" onClick={() => { onBackFromItem(); setViewingItem(null); }}>← Back</button>
+<button type="button" className="study-viewer-back" onClick={() => { onBackFromItem(); setViewingItem(null); }}>â Back</button>
         <span className="study-viewer-title">{item.title}</span>
         <button type="button" className="study-viewer-delete" onClick={() => { handleDeleteItem(folder.id, item.id); onBackFromItem(); setViewingItem(null); }} aria-label="Delete">Delete</button>
         </div>
         <div className="study-viewer-public-row">
-          <button type="button" className="study-public-toggle-btn" onClick={() => handleTogglePublicItem(folder.id, item.id)} disabled={publishingItemId === item.id}>
-            {publishingItemId === item.id ? 'Updating…' : item.isPublic ? 'Make private' : 'Make public'}
+          <button aria-label="Button" type="button" className="study-public-toggle-btn" onClick={() => handleTogglePublicItem(folder.id, item.id)} disabled={publishingItemId === item.id}>
+            {publishingItemId === item.id ? 'Updatingâ¦' : item.isPublic ? 'Make private' : 'Make public'}
           </button>
           <span className="study-public-label">{item.isPublic ? 'Public in library' : 'Private'}</span>
         </div>
@@ -1246,7 +1246,7 @@ export default function Study({
     return (
       <div className="study-page">
         <div className="study-breadcrumb">
-          <button type="button" className="study-back" onClick={() => { onSelectFolderId(null); cancelCreate(); }}>← Classes</button>
+          <button type="button" className="study-back" onClick={() => { onSelectFolderId(null); cancelCreate(); }}>â Classes</button>
           {selectedFolder && <span className="study-breadcrumb-name">{selectedFolder.name}</span>}
         </div>
         <div className="study-create-box">
@@ -1256,39 +1256,39 @@ export default function Study({
               <p className="study-create-hint">Paste your notes below and choose what to generate. You can select multiple. One paste can create flashcards, study guide, and practice test.</p>
               <div className="study-create-multi">
                 <label className="study-create-check">
-                  <input type="checkbox" checked={effectiveModes.includes('flashcards') || createMode === 'flashcards'} onChange={() => toggleCreateMode('flashcards')} />
+                  <input aria-label="Field" type="checkbox" checked={effectiveModes.includes('flashcards') || createMode === 'flashcards'} onChange={() => toggleCreateMode('flashcards')} />
                   <span>Flashcards</span>
                 </label>
                 {(effectiveModes.includes('flashcards') || createMode === 'flashcards') && (
                   <div className="study-create-option study-create-option-inline">
                     <label className="study-create-label">How many?</label>
-                    <input type="number" min={1} max={50} className="study-create-number" value={flashcardCount} onChange={(e) => setFlashcardCount(e.target.value)} />
+                    <input aria-label="Field" type="number" min={1} max={50} className="study-create-number" value={flashcardCount} onChange={(e) => setFlashcardCount(e.target.value)} />
                   </div>
                 )}
                 <label className="study-create-check">
-                  <input type="checkbox" checked={effectiveModes.includes('study_guide') || createMode === 'study_guide'} onChange={() => toggleCreateMode('study_guide')} />
+                  <input aria-label="Field" type="checkbox" checked={effectiveModes.includes('study_guide') || createMode === 'study_guide'} onChange={() => toggleCreateMode('study_guide')} />
                   <span>Study guide</span>
                 </label>
                 {(effectiveModes.includes('study_guide') || createMode === 'study_guide') && (
                   <div className="study-create-option study-create-option-inline">
                     <span className="study-create-label">Length</span>
-                    <label className="study-create-radio-inline"><input type="radio" name="guideMode" value="quick" checked={studyGuideMode === 'quick'} onChange={() => setStudyGuideMode('quick')} /> Quick</label>
-                    <label className="study-create-radio-inline"><input type="radio" name="guideMode" value="long" checked={studyGuideMode === 'long'} onChange={() => setStudyGuideMode('long')} /> Long</label>
+                    <label className="study-create-radio-inline"><input aria-label="Field" type="radio" name="guideMode" value="quick" checked={studyGuideMode === 'quick'} onChange={() => setStudyGuideMode('quick')} /> Quick</label>
+                    <label className="study-create-radio-inline"><input aria-label="Field" type="radio" name="guideMode" value="long" checked={studyGuideMode === 'long'} onChange={() => setStudyGuideMode('long')} /> Long</label>
                   </div>
                 )}
                 <label className="study-create-check">
-                  <input type="checkbox" checked={effectiveModes.includes('practice_test') || createMode === 'practice_test'} onChange={() => toggleCreateMode('practice_test')} />
+                  <input aria-label="Field" type="checkbox" checked={effectiveModes.includes('practice_test') || createMode === 'practice_test'} onChange={() => toggleCreateMode('practice_test')} />
                   <span>Practice test (multiple choice)</span>
                 </label>
                 {(effectiveModes.includes('practice_test') || createMode === 'practice_test') && (
                   <div className="study-create-option study-create-option-inline">
                     <label className="study-create-label">Questions</label>
-                    <input type="number" min={1} max={30} className="study-create-number" value={practiceTestCount} onChange={(e) => setPracticeTestCount(e.target.value)} />
+                    <input aria-label="Field" type="number" min={1} max={30} className="study-create-number" value={practiceTestCount} onChange={(e) => setPracticeTestCount(e.target.value)} />
                   </div>
                 )}
               </div>
               <div className="study-create-input-row">
-                <textarea
+                <textarea aria-label="Field"
                   className="study-create-textarea"
                   placeholder="Paste your notes or textbook excerpt here. You can also attach PDFs below."
                   value={pasteText}
@@ -1296,7 +1296,7 @@ export default function Study({
                   rows={8}
                 />
                 <div className="study-create-pdf-row">
-                  <input
+                  <input aria-label="Field"
                     ref={pdfInputRef}
                     type="file"
                     accept=".pdf,application/pdf"
@@ -1304,13 +1304,13 @@ export default function Study({
                     onChange={handlePdfUpload}
                     aria-label="Upload PDF"
                   />
-                  <button
+                  <button aria-label="Button"
                     type="button"
                     className="study-btn study-btn-secondary"
                     onClick={() => pdfInputRef.current?.click()}
                     disabled={pdfExtracting}
                   >
-                    {pdfExtracting ? 'Extracting…' : 'Upload PDF'}
+                    {pdfExtracting ? 'Extractingâ¦' : 'Upload PDF'}
                   </button>
                 </div>
                 {attachedPdfs.length > 0 && (
@@ -1318,14 +1318,14 @@ export default function Study({
                     {attachedPdfs.map((pdf) => (
                       <li key={pdf.id} className="study-create-pdf-item">
                         <span className="study-create-pdf-name">{pdf.name}</span>
-                        <button
+                        <button aria-label="Button"
                           type="button"
                           className="study-create-pdf-remove"
                           onClick={() => removeAttachedPdf(pdf.id)}
                           aria-label={`Remove ${pdf.name}`}
                           title="Remove file"
                         >
-                          ×
+                          Ã
                         </button>
                       </li>
                     ))}
@@ -1335,14 +1335,14 @@ export default function Study({
               {genError && <p className="study-create-error">{genError}</p>}
               <div className="study-create-public-toggle">
                 <label className="study-create-check">
-                  <input type="checkbox" checked={createIsPublic} onChange={(e) => setCreateIsPublic(e.target.checked)} />
+                  <input aria-label="Field" type="checkbox" checked={createIsPublic} onChange={(e) => setCreateIsPublic(e.target.checked)} />
                   <span>Make created set(s) public in the shared library</span>
                 </label>
               </div>
               <div className="study-create-actions">
                 <button type="button" className="study-btn study-btn-secondary" onClick={cancelCreate}>Cancel</button>
-                <button type="button" className="study-btn study-btn-primary" onClick={handleGenerate} disabled={!getCombinedText().trim() || isGenerating || effectiveModes.length === 0}>
-                  {isGenerating ? 'Generating…' : 'Generate'}
+                <button aria-label="Button" type="button" className="study-btn study-btn-primary" onClick={handleGenerate} disabled={!getCombinedText().trim() || isGenerating || effectiveModes.length === 0}>
+                  {isGenerating ? 'Generatingâ¦' : 'Generate'}
                 </button>
               </div>
             </>
@@ -1352,21 +1352,21 @@ export default function Study({
               {generatedByType.flashcards != null && (
                 <div className="study-generated-preview">
                   <p>Flashcards: {generatedByType.flashcards.length} cards</p>
-                  <input type="text" className="study-save-title" placeholder="Title (optional)" value={saveTitlesByType.flashcards} onChange={(e) => setSaveTitlesByType((t) => ({ ...t, flashcards: e.target.value }))} />
+                  <input aria-label="Field" type="text" className="study-save-title" placeholder="Title (optional)" value={saveTitlesByType.flashcards} onChange={(e) => setSaveTitlesByType((t) => ({ ...t, flashcards: e.target.value }))} />
                   <button type="button" className="study-btn study-btn-primary" onClick={() => handleSaveGenerated('flashcards')}>Save flashcards</button>
                 </div>
               )}
               {generatedByType.study_guide != null && (
                 <div className="study-generated-preview">
                   <p>Study guide: {generatedByType.study_guide.sections?.length || 0} sections</p>
-                  <input type="text" className="study-save-title" placeholder="Title (optional)" value={saveTitlesByType.study_guide} onChange={(e) => setSaveTitlesByType((t) => ({ ...t, study_guide: e.target.value }))} />
+                  <input aria-label="Field" type="text" className="study-save-title" placeholder="Title (optional)" value={saveTitlesByType.study_guide} onChange={(e) => setSaveTitlesByType((t) => ({ ...t, study_guide: e.target.value }))} />
                   <button type="button" className="study-btn study-btn-primary" onClick={() => handleSaveGenerated('study_guide')}>Save study guide</button>
                 </div>
               )}
               {generatedByType.practice_test != null && (
                 <div className="study-generated-preview">
                   <p>Practice test: {generatedByType.practice_test.length} questions</p>
-                  <input type="text" className="study-save-title" placeholder="Title (optional)" value={saveTitlesByType.practice_test} onChange={(e) => setSaveTitlesByType((t) => ({ ...t, practice_test: e.target.value }))} />
+                  <input aria-label="Field" type="text" className="study-save-title" placeholder="Title (optional)" value={saveTitlesByType.practice_test} onChange={(e) => setSaveTitlesByType((t) => ({ ...t, practice_test: e.target.value }))} />
                   <button type="button" className="study-btn study-btn-primary" onClick={() => handleSaveGenerated('practice_test')}>Save practice test</button>
                 </div>
               )}
@@ -1381,19 +1381,19 @@ export default function Study({
               {createMode === 'flashcards' && (
                 <div className="study-generated-preview">
                   <p>{generated.length} cards generated.</p>
-                  <input type="text" className="study-save-title" placeholder="Set title (optional)" value={saveTitle} onChange={(e) => setSaveTitle(e.target.value)} />
+                  <input aria-label="Field" type="text" className="study-save-title" placeholder="Set title (optional)" value={saveTitle} onChange={(e) => setSaveTitle(e.target.value)} />
                 </div>
               )}
               {createMode === 'study_guide' && (
                 <div className="study-generated-preview">
                   <p>{generated.sections?.length || 0} sections.</p>
-                  <input type="text" className="study-save-title" placeholder="Study guide title (optional)" value={saveTitle} onChange={(e) => setSaveTitle(e.target.value)} />
+                  <input aria-label="Field" type="text" className="study-save-title" placeholder="Study guide title (optional)" value={saveTitle} onChange={(e) => setSaveTitle(e.target.value)} />
                 </div>
               )}
               {createMode === 'practice_test' && (
                 <div className="study-generated-preview">
                   <p>{generated.length} questions generated.</p>
-                  <input type="text" className="study-save-title" placeholder="Test title (optional)" value={saveTitle} onChange={(e) => setSaveTitle(e.target.value)} />
+                  <input aria-label="Field" type="text" className="study-save-title" placeholder="Test title (optional)" value={saveTitle} onChange={(e) => setSaveTitle(e.target.value)} />
                 </div>
               )}
               <div className="study-create-actions">
@@ -1416,7 +1416,7 @@ export default function Study({
       return (
         <div className="study-page">
           <div className="study-breadcrumb">
-            <button type="button" className="study-back" onClick={() => { cancelLectureFlow(); if (isRecording) stopRecording(); }}>← {selectedFolder.name}</button>
+            <button type="button" className="study-back" onClick={() => { cancelLectureFlow(); if (isRecording) stopRecording(); }}>â {selectedFolder.name}</button>
             <span className="study-breadcrumb-name">Lecture recording</span>
           </div>
           <h2 className="study-main-title">Lecture recording</h2>
@@ -1439,12 +1439,12 @@ export default function Study({
     return (
       <div className="study-page">
         <div className="study-breadcrumb">
-          <button type="button" className="study-back" onClick={() => { onSelectFolderId(null); setEditingFolderId(null); }}>← Classes</button>
+          <button type="button" className="study-back" onClick={() => { onSelectFolderId(null); setEditingFolderId(null); }}>â Classes</button>
           <span className="study-breadcrumb-name">{selectedFolder.name}</span>
         </div>
         {isEditingFolder ? (
           <div className="study-folder-edit-inline">
-            <input
+            <input aria-label="Field"
               type="text"
               className="study-folder-input"
               placeholder="Folder name"
@@ -1452,7 +1452,7 @@ export default function Study({
               onChange={(e) => setEditFolderName(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleRenameFolder(selectedFolderId, editFolderName, editFolderDescription)}
             />
-            <textarea
+            <textarea aria-label="Field"
               className="study-folder-input study-folder-desc-input"
               placeholder="Description (optional)"
               value={editFolderDescription}
@@ -1476,16 +1476,16 @@ export default function Study({
         <p className="study-folder-hint">Add flashcards, study guides, practice tests, or lecture recordings. Publish items to the public library from each item or when creating.</p>
         {publishError && <p className="study-create-error" role="alert">{publishError}</p>}
         <div className="study-add-buttons">
-          <button type="button" className="study-btn study-btn-primary" onClick={() => { setCreateMode('flashcards'); setCreateModes(['flashcards']); }}>
+          <button aria-label="Button" type="button" className="study-btn study-btn-primary" onClick={() => { setCreateMode('flashcards'); setCreateModes(['flashcards']); }}>
             Add flashcards
           </button>
-          <button type="button" className="study-btn study-btn-primary" onClick={() => { setCreateMode('study_guide'); setCreateModes(['study_guide']); }}>
+          <button aria-label="Button" type="button" className="study-btn study-btn-primary" onClick={() => { setCreateMode('study_guide'); setCreateModes(['study_guide']); }}>
             Add study guide
           </button>
-          <button type="button" className="study-btn study-btn-primary" onClick={() => { setCreateMode('practice_test'); setCreateModes(['practice_test']); }}>
+          <button aria-label="Button" type="button" className="study-btn study-btn-primary" onClick={() => { setCreateMode('practice_test'); setCreateModes(['practice_test']); }}>
             Add practice test
           </button>
-          <button
+          <button aria-label="Button"
             type="button"
             className="study-btn study-btn-secondary"
             onClick={() => {
@@ -1510,34 +1510,34 @@ export default function Study({
             <li key={item.id} className="study-item-wrap">
               {editingItemId === item.id ? (
                 <div className="study-item-edit-inline">
-                  <input
+                  <input aria-label="Field"
                     type="text"
                     className="study-item-edit-input"
                     value={editItemTitle}
                     onChange={(e) => setEditItemTitle(e.target.value)}
                     onKeyDown={(e) => { if (e.key === 'Enter') handleRenameItem(selectedFolderId, item.id, editItemTitle); if (e.key === 'Escape') setEditingItemId(null); }}
-                    autoFocus
+                   
                   />
                   <button type="button" className="study-btn study-btn-secondary study-item-edit-btn" onClick={() => setEditingItemId(null)}>Cancel</button>
                   <button type="button" className="study-btn study-btn-primary study-item-edit-btn" onClick={() => handleRenameItem(selectedFolderId, item.id, editItemTitle)}>Save</button>
                 </div>
               ) : (
                 <>
-                  <button type="button" className="study-item-card" onClick={() => { setViewingItem(item); onOpenItem(selectedFolderId, item.id); }}>
+                  <button aria-label="Button" type="button" className="study-item-card" onClick={() => { setViewingItem(item); onOpenItem(selectedFolderId, item.id); }}>
                     <span className="study-item-type">{item.type === 'flashcards' ? 'Flashcards' : item.type === 'practice_test' ? 'Practice test' : item.type === 'lecture_recording' ? 'Lecture recording' : 'Study guide'}</span>
                     <span className="study-item-title">{item.title}</span>
                   </button>
                   <button type="button" className="study-item-edit" onClick={(e) => { e.stopPropagation(); setEditingItemId(item.id); setEditItemTitle(item.title); }} aria-label={`Edit ${item.title}`}>Edit</button>
-                  <button
+                  <button aria-label="Button"
                     type="button"
                     className="study-item-edit"
                     onClick={(e) => { e.stopPropagation(); handleTogglePublicItem(selectedFolderId, item.id); }}
                     disabled={publishingItemId === item.id}
                     aria-label={item.isPublic ? 'Make private' : 'Make public'}
                   >
-                    {publishingItemId === item.id ? 'Updating…' : item.isPublic ? 'Make private' : 'Make public'}
+                    {publishingItemId === item.id ? 'Updatingâ¦' : item.isPublic ? 'Make private' : 'Make public'}
                   </button>
-                  <button type="button" className="study-item-delete" onClick={(e) => { e.stopPropagation(); handleDeleteItem(selectedFolderId, item.id); }} aria-label={`Delete ${item.title}`}>×</button>
+                  <button type="button" className="study-item-delete" onClick={(e) => { e.stopPropagation(); handleDeleteItem(selectedFolderId, item.id); }} aria-label={`Delete ${item.title}`}>Ã</button>
                 </>
               )}
             </li>
@@ -1556,22 +1556,22 @@ export default function Study({
       <h2 className="study-main-title">Your class folders</h2>
       <p className="study-main-hint">Create folders for each class, then add flashcards and study guides from your notes using AI.</p>
       <div className="study-main-actions">
-        <button type="button" className="study-btn study-btn-primary study-add-folder-btn" onClick={() => setShowAddFolder(true)}>
+        <button aria-label="Button" type="button" className="study-btn study-btn-primary study-add-folder-btn" onClick={() => setShowAddFolder(true)}>
           + Add folder
         </button>
       </div>
       {showAddFolder && (
         <div className="study-add-folder">
-          <input
+          <input aria-label="Field"
             type="text"
             className="study-folder-input"
             placeholder="Class or folder name"
             value={addFolderName}
             onChange={(e) => setAddFolderName(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleAddFolder()}
-            autoFocus
+           
           />
-          <textarea
+          <textarea aria-label="Field"
             className="study-folder-input study-folder-desc-input"
             placeholder="Description (optional)"
             value={addFolderDescription}
@@ -1589,7 +1589,7 @@ export default function Study({
           <li key={folder.id} className="study-folder-card-wrap">
             {editingFolderId === folder.id ? (
               <div className="study-folder-edit-inline study-folder-edit-inline--card">
-                <input
+                <input aria-label="Field"
                   type="text"
                   className="study-folder-input"
                   placeholder="Folder name"
@@ -1597,7 +1597,7 @@ export default function Study({
                   onChange={(e) => setEditFolderName(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleRenameFolder(folder.id, editFolderName, editFolderDescription)}
                 />
-                <textarea
+                <textarea aria-label="Field"
                   className="study-folder-input study-folder-desc-input"
                   placeholder="Description (optional)"
                   value={editFolderDescription}
@@ -1611,7 +1611,7 @@ export default function Study({
               </div>
             ) : (
               <>
-                <button type="button" className="study-folder-card" onClick={() => { onSelectFolderId(folder.id); onAddRecent('folder', folder.id, folder.name); }}>
+                <button aria-label="Button" type="button" className="study-folder-card" onClick={() => { onSelectFolderId(folder.id); onAddRecent('folder', folder.id, folder.name); }}>
                   <div className="study-folder-card-text">
                     <span className="study-folder-name">{folder.name}</span>
                     {folder.description && <span className="study-folder-desc">{folder.description}</span>}
@@ -1619,7 +1619,7 @@ export default function Study({
                   <span className="study-folder-count">{(itemsByFolder[folder.id] || []).length} items</span>
                 </button>
                 <button type="button" className="study-folder-edit" onClick={(e) => { e.stopPropagation(); setEditingFolderId(folder.id); setEditFolderName(folder.name); setEditFolderDescription(folder.description || ''); }} aria-label="Edit folder">Edit</button>
-                <button type="button" className="study-folder-delete" onClick={(e) => { e.stopPropagation(); handleDeleteFolder(folder.id); }} aria-label="Delete folder">×</button>
+                <button type="button" className="study-folder-delete" onClick={(e) => { e.stopPropagation(); handleDeleteFolder(folder.id); }} aria-label="Delete folder">Ã</button>
               </>
             )}
           </li>

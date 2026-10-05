@@ -51,7 +51,7 @@ export default function PlanList({ onSelectPlan, onCreatePlan }) {
   if (loading) {
     return (
       <div className="plan-list">
-        <div className="plan-list-loading">Loading your plans…</div>
+        <div className="plan-list-loading">Loading your plansâ¦</div>
       </div>
     );
   }
@@ -61,8 +61,8 @@ export default function PlanList({ onSelectPlan, onCreatePlan }) {
       <div className="plan-list">
         <h2 className="plan-list-title">Your plans</h2>
         <div className="plan-list-empty">
-          <p>We couldn’t load your plans right now. Create a new plan below.</p>
-          <button type="button" className="plan-list-btn-primary" onClick={onCreatePlan}>
+          <p>We couldnât load your plans right now. Create a new plan below.</p>
+          <button aria-label="Button" type="button" className="plan-list-btn-primary" onClick={onCreatePlan}>
             Create a plan
           </button>
         </div>
@@ -76,8 +76,8 @@ export default function PlanList({ onSelectPlan, onCreatePlan }) {
       <p className="plan-list-subtitle">Choose a week to view that plan.</p>
       {plans.length === 0 ? (
         <div className="plan-list-empty">
-          <p>You don’t have a saved plan yet.</p>
-          <button type="button" className="plan-list-btn-primary" onClick={onCreatePlan}>
+          <p>You donât have a saved plan yet.</p>
+          <button aria-label="Button" type="button" className="plan-list-btn-primary" onClick={onCreatePlan}>
             Create a plan
           </button>
         </div>
@@ -85,14 +85,14 @@ export default function PlanList({ onSelectPlan, onCreatePlan }) {
         <ul className="plan-list-ul">
           {plans.map((row) => (
             <li key={row.id} className="plan-list-week-li">
-              <button
+              <button aria-label="Button"
                 type="button"
                 className="plan-list-week-card"
                 onClick={() => onSelectPlan(row)}
               >
                 <span className="plan-list-week-label">{getPlanLabel(row)}</span>
               </button>
-              <button
+              <button aria-label="Button"
                 type="button"
                 className="plan-list-week-delete"
                 onClick={(e) => handleDelete(e, row)}
@@ -100,7 +100,7 @@ export default function PlanList({ onSelectPlan, onCreatePlan }) {
                 aria-label={`Delete plan for ${getPlanLabel(row)}`}
                 title="Delete plan"
               >
-                {deletingId === row.id ? '…' : '×'}
+                {deletingId === row.id ? 'â¦' : 'Ã'}
               </button>
             </li>
           ))}
@@ -108,7 +108,7 @@ export default function PlanList({ onSelectPlan, onCreatePlan }) {
       )}
       {plans.length > 0 && (
         <div className="plan-list-create-wrap">
-          <button type="button" className="plan-list-btn-secondary" onClick={onCreatePlan}>
+          <button aria-label="Button" type="button" className="plan-list-btn-secondary" onClick={onCreatePlan}>
             Create new plan
           </button>
         </div>

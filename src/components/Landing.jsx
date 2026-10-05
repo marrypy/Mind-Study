@@ -44,7 +44,7 @@ function formatDateFromISO(dateStr) {
 
 function parseActivity(activity) {
   if (!activity) return { subject: 'Study', duration: '' };
-  const match = String(activity).match(/^(.+?)\s*[•·\-]\s*(\d+)\s*min\)?$|^(.+?)\s*\((\d+)\s*min\)$/);
+  const match = String(activity).match(/^(.+?)\s*[â¢Â·\-]\s*(\d+)\s*min\)?$|^(.+?)\s*\((\d+)\s*min\)$/);
   if (match) {
     const subject = (match[1] || match[3] || activity).trim();
     const duration = match[2] || match[4] || '';
@@ -212,10 +212,10 @@ export default function Landing({ onGetStarted, onGeneratePlan, onGenerateClassF
         </p>
 
         <div className="landing-logged-in-actions">
-          <button type="button" className="landing-cta landing-cta--primary" onClick={onGeneratePlan}>
+          <button aria-label="Button" type="button" className="landing-cta landing-cta--primary" onClick={onGeneratePlan}>
             Generate plan
           </button>
-          <button type="button" className="landing-cta landing-cta--secondary" onClick={onGenerateClassFolder}>
+          <button aria-label="Button" type="button" className="landing-cta landing-cta--secondary" onClick={onGenerateClassFolder}>
             Generate class folder
           </button>
         </div>
@@ -227,7 +227,7 @@ export default function Landing({ onGetStarted, onGeneratePlan, onGenerateClassF
           ) : (
             <div className="landing-review-cards">
               {folders.map((f) => (
-                <button
+                <button aria-label="Button"
                   key={f.id}
                   type="button"
                   className="landing-review-card"
@@ -241,13 +241,13 @@ export default function Landing({ onGetStarted, onGeneratePlan, onGenerateClassF
 
           <h2 className="landing-review-subheading">Plans</h2>
           {plansLoading ? (
-            <p className="landing-review-empty">Loading…</p>
+            <p className="landing-review-empty">Loadingâ¦</p>
           ) : plans.length === 0 ? (
             <p className="landing-review-empty">No plans yet</p>
           ) : (
             <div className="landing-review-cards">
               {plans.map((row) => (
-                <button
+                <button aria-label="Button"
                   key={row.id}
                   type="button"
                   className="landing-review-card"
@@ -291,17 +291,17 @@ export default function Landing({ onGetStarted, onGeneratePlan, onGenerateClassF
                               })
                               .filter(Boolean);
                             return studyEntries.length > 0
-                              ? studyEntries.join(' · ')
+                              ? studyEntries.join(' Â· ')
                               : 'No scheduled activities';
                           })()}
                         </p>
                         {onOpenPlan && plans[0] && (
-                          <button
+                          <button aria-label="Button"
                             type="button"
                             className="timeline-card-link"
                             onClick={() => onOpenPlan(plans[0])}
                           >
-                            View plan →
+                            View plan â
                           </button>
                         )}
                       </div>
@@ -338,17 +338,17 @@ export default function Landing({ onGetStarted, onGeneratePlan, onGenerateClassF
                               })
                               .filter(Boolean);
                             return studyEntries.length > 0
-                              ? studyEntries.join(' · ')
+                              ? studyEntries.join(' Â· ')
                               : 'No scheduled activities';
                           })()}
                         </p>
                         {onOpenPlan && plans[0] && (
-                          <button
+                          <button aria-label="Button"
                             type="button"
                             className="timeline-card-link"
                             onClick={() => onOpenPlan(plans[0])}
                           >
-                            View plan →
+                            View plan â
                           </button>
                         )}
                       </div>
@@ -369,7 +369,7 @@ export default function Landing({ onGetStarted, onGeneratePlan, onGenerateClassF
           )}
           {useDateTimeline && hasExtraTimelineDays && (
             <div className="landing-timeline-toggle-row">
-              <button
+              <button aria-label="Button"
                 type="button"
                 className="timeline-toggle-button"
                 onClick={() => setShowFullTimeline((prev) => !prev)}
@@ -459,11 +459,11 @@ export default function Landing({ onGetStarted, onGeneratePlan, onGenerateClassF
 
       <FadeInOnScroll as="section" className="landing-section landing-section-cta" aria-labelledby="ready-heading">
         <h2 id="ready-heading" className="landing-section-title">Ready To Start?</h2>
-        <button type="button" className="landing-cta" onClick={onGetStarted}>
+        <button aria-label="Button" type="button" className="landing-cta" onClick={onGetStarted}>
           Get Started Free
         </button>
         <p className="landing-disclaimer">
-         Takes up to 2 minutes • Your data stays private.
+         Takes up to 2 minutes â¢ Your data stays private.
         </p>
       </FadeInOnScroll>
 

@@ -44,7 +44,7 @@ function formatDateFromISO(dateStr) {
 
 function parseActivity(activity) {
   if (!activity) return { subject: 'Study', duration: '' };
-  const match = activity.match(/^(.+?)\s*[•·\-]\s*(\d+)\s*min\)?$|^(.+?)\s*\((\d+)\s*min\)$/);
+  const match = activity.match(/^(.+?)\s*[â¢Â·\-]\s*(\d+)\s*min\)?$|^(.+?)\s*\((\d+)\s*min\)$/);
   if (match) {
     const subject = (match[1] || match[3] || activity).trim();
     const duration = match[2] || match[4] || '';
@@ -245,11 +245,11 @@ export default function StudyPlan({ plan, onBack, error, saveError, librarySearc
           <div className="plan-burnout-tips">
             <h4 className="plan-burnout-tips-title">Burnout tips</h4>
             <ul className="plan-burnout-tips-list">
-              <li>Schedule short breaks between blocks — your brain needs recovery time.</li>
-              <li>Protect sleep; cut back on sessions before bed if you’re already tired.</li>
-              <li>If the plan feels too heavy, do less and repeat — consistency beats cramming.</li>
-              <li>Say no to extra commitments when you’re close to a deadline or low on energy.</li>
-              <li>Notice when you’re pushing through exhaustion and pause instead of powering on.</li>
+              <li>Schedule short breaks between blocks â your brain needs recovery time.</li>
+              <li>Protect sleep; cut back on sessions before bed if youâre already tired.</li>
+              <li>If the plan feels too heavy, do less and repeat â consistency beats cramming.</li>
+              <li>Say no to extra commitments when youâre close to a deadline or low on energy.</li>
+              <li>Notice when youâre pushing through exhaustion and pause instead of powering on.</li>
             </ul>
           </div>
         </div>
@@ -297,7 +297,7 @@ export default function StudyPlan({ plan, onBack, error, saveError, librarySearc
                           })
                           .filter(Boolean);
                         return studyEntries.length > 0
-                          ? studyEntries.join(' · ')
+                          ? studyEntries.join(' Â· ')
                           : 'No scheduled activities';
                       })()}
                     </p>
@@ -335,7 +335,7 @@ export default function StudyPlan({ plan, onBack, error, saveError, librarySearc
                           })
                           .filter(Boolean);
                         return studyEntries.length > 0
-                          ? studyEntries.join(' · ')
+                          ? studyEntries.join(' Â· ')
                           : 'No scheduled activities';
                       })()}
                     </p>
@@ -355,7 +355,7 @@ export default function StudyPlan({ plan, onBack, error, saveError, librarySearc
               })}
         </div>
         {useDateTimeline && hasExtraTimelineDays && (
-          <button
+          <button aria-label="Button"
             type="button"
             className="timeline-toggle-button"
             onClick={() => setShowFullTimeline((prev) => !prev)}
@@ -379,7 +379,7 @@ export default function StudyPlan({ plan, onBack, error, saveError, librarySearc
           </div>
         </div>
         {publicError && <p className="plan-public-error" role="alert">{publicError}</p>}
-        {publicLoading && <p className="plan-public-loading">Loading…</p>}
+        {publicLoading && <p className="plan-public-loading">Loadingâ¦</p>}
         {!publicLoading && !publicError && publicItems.length === 0 && <p className="plan-public-empty">No public items found.</p>}
         {!publicLoading && !publicError && publicItems.length > 0 && (
           <ul className="plan-public-grid">
@@ -400,7 +400,7 @@ export default function StudyPlan({ plan, onBack, error, saveError, librarySearc
       </section>
 
       <div className="plan-footer">
-        <button type="button" className="btn-back" onClick={onBack}>
+        <button aria-label="Button" type="button" className="btn-back" onClick={onBack}>
           Create New Plan
         </button>
       </div>
