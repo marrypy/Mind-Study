@@ -18,7 +18,7 @@ export default function PublicItemViewer({ item, onClose }) {
     return (
       <div className="study-viewer">
         <div className="study-viewer-header">
-          <button type="button" className="study-viewer-back" onClick={onClose}>← Back</button>
+          <button type="button" className="study-viewer-back" onClick={onClose}>â Back</button>
           <span className="study-viewer-title">{item.title}</span>
           <span className="study-viewer-nav">{idx + 1} / {cards.length}</span>
         </div>
@@ -28,7 +28,7 @@ export default function PublicItemViewer({ item, onClose }) {
         <div className="study-flashcard-wrap">
           {card ? (
             <>
-              <button
+              <button aria-label="Button"
                 type="button"
                 className="study-flashcard"
                 onClick={() => setFlashcardFlipped((f) => !f)}
@@ -60,7 +60,7 @@ export default function PublicItemViewer({ item, onClose }) {
     return (
       <div className="study-viewer">
         <div className="study-viewer-header">
-          <button type="button" className="study-viewer-back" onClick={() => { onClose(); setTestQuestionIndex(0); setTestSelected(null); setTestShowResult(false); setTestScore({ correct: 0, total: 0 }); }}>← Back</button>
+          <button type="button" className="study-viewer-back" onClick={() => { onClose(); setTestQuestionIndex(0); setTestSelected(null); setTestShowResult(false); setTestScore({ correct: 0, total: 0 }); }}>â Back</button>
           <span className="study-viewer-title">{item.title}</span>
           {!showScore && total > 0 && <span className="study-viewer-nav">{Math.min(idx + 1, total)} / {total}</span>}
         </div>
@@ -84,7 +84,7 @@ export default function PublicItemViewer({ item, onClose }) {
                     %
                   </p>
                   <div className="study-practice-actions">
-                    <button
+                    <button aria-label="Button"
                       type="button"
                       className="study-btn study-btn-primary"
                       onClick={() => {
@@ -96,7 +96,7 @@ export default function PublicItemViewer({ item, onClose }) {
                     >
                       Restart test
                     </button>
-                    <button
+                    <button aria-label="Button"
                       type="button"
                       className="study-btn study-btn-secondary"
                       onClick={() => {
@@ -125,7 +125,7 @@ export default function PublicItemViewer({ item, onClose }) {
                   const showRight = testShowResult && correct;
                   const showWrong = testShowResult && selected && !correct;
                   return (
-                    <button
+                    <button aria-label="Button"
                       key={i}
                       type="button"
                       className={`study-test-option ${showRight ? 'study-test-option--correct' : ''} ${showWrong ? 'study-test-option--wrong' : ''}`}
@@ -162,7 +162,7 @@ export default function PublicItemViewer({ item, onClose }) {
   return (
     <div className="study-viewer">
       <div className="study-viewer-header">
-        <button type="button" className="study-viewer-back" onClick={onClose}>← Back</button>
+        <button type="button" className="study-viewer-back" onClick={onClose}>â Back</button>
         <span className="study-viewer-title">{item.title}</span>
       </div>
       {item.creatorUsername && (
