@@ -84,17 +84,17 @@ export default function AuthModal({ isOpen, onClose, defaultTab = 'login' }) {
     <div className="auth-modal-overlay" onClick={onClose}>
       <div className="auth-modal" onClick={(e) => e.stopPropagation()}>
         <button type="button" className="auth-modal-close" onClick={onClose} aria-label="Close">
-          ×
+          Ã
         </button>
         <div className="auth-modal-tabs">
-          <button
+          <button aria-label="Button"
             type="button"
             className={tab === 'login' ? 'active' : ''}
             onClick={() => { setTab('login'); setMessage({ type: '', text: '' }); }}
           >
             Log in
           </button>
-          <button
+          <button aria-label="Button"
             type="button"
             className={tab === 'signup' ? 'active' : ''}
             onClick={() => { setTab('signup'); setMessage({ type: '', text: '' }); }}
@@ -105,7 +105,7 @@ export default function AuthModal({ isOpen, onClose, defaultTab = 'login' }) {
         <form onSubmit={handleSubmit} className="auth-modal-form">
           <label>
             <span>Email</span>
-            <input
+            <input aria-label="Field"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -117,7 +117,7 @@ export default function AuthModal({ isOpen, onClose, defaultTab = 'login' }) {
           {tab === 'signup' && (
             <label>
               <span>Username</span>
-              <input
+              <input aria-label="Field"
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -130,11 +130,11 @@ export default function AuthModal({ isOpen, onClose, defaultTab = 'login' }) {
           )}
           <label>
             <span>Password</span>
-            <input
+            <input aria-label="Field"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
+              placeholder="â¢â¢â¢â¢â¢â¢â¢â¢"
               required
               minLength={6}
               autoComplete={tab === 'signup' ? 'new-password' : 'current-password'}
@@ -144,18 +144,18 @@ export default function AuthModal({ isOpen, onClose, defaultTab = 'login' }) {
             <>
               <label>
                 <span>Confirm password</span>
-                <input
+                <input aria-label="Field"
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="••••••••"
+                  placeholder="â¢â¢â¢â¢â¢â¢â¢â¢"
                   required
                   minLength={6}
                   autoComplete="new-password"
                 />
               </label>
               <label className="auth-modal-terms">
-                <input
+                <input aria-label="Field"
                   type="checkbox"
                   checked={acceptedTerms}
                   onChange={(e) => setAcceptedTerms(e.target.checked)}
@@ -178,19 +178,19 @@ export default function AuthModal({ isOpen, onClose, defaultTab = 'login' }) {
                   : message.text}
               </p>
               {isEmailNotConfirmed && (
-                <button
+                <button aria-label="Button"
                   type="button"
                   className="auth-modal-resend"
                   onClick={handleResendConfirmation}
                   disabled={resendLoading}
                 >
-                  {resendLoading ? 'Sending…' : 'Resend confirmation email'}
+                  {resendLoading ? 'Sendingâ¦' : 'Resend confirmation email'}
                 </button>
               )}
             </div>
           )}
-          <button type="submit" className="auth-modal-submit" disabled={loading}>
-            {loading ? 'Please wait…' : tab === 'signup' ? 'Create account' : 'Log in'}
+          <button aria-label="Button" type="submit" className="auth-modal-submit" disabled={loading}>
+            {loading ? 'Please waitâ¦' : tab === 'signup' ? 'Create account' : 'Log in'}
           </button>
         </form>
       </div>
