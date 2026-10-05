@@ -132,7 +132,7 @@ export default function Pomodoro() {
       <div className="pomodoro-settings pomodoro-settings--inline">
         <div className="pomodoro-setting">
           <label className="pomodoro-label">Study (minutes)</label>
-          <input
+          <input aria-label="Field"
             type="number"
             min={1}
             max={60}
@@ -147,7 +147,7 @@ export default function Pomodoro() {
         </div>
         <div className="pomodoro-setting">
           <label className="pomodoro-label">Break (minutes)</label>
-          <input
+          <input aria-label="Field"
             type="number"
             min={1}
             max={30}
