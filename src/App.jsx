@@ -346,7 +346,7 @@ function AppContent() {
     <div className="app">
       <header className={`app-header app-header--full${headerHidden ? ' app-header--hidden' : ''}`}>
         <div className="header-inner">
-          <button
+          <button aria-label="Button"
             type="button"
             className="logo-wrap logo-button"
             onClick={() => navigate('landing')}
@@ -356,61 +356,61 @@ function AppContent() {
             <p className="logo-subtitle">AI-Powered Study Planning</p>
           </button>
           <div className="header-search-wrap">
-            <input
+            <input aria-label="Field"
               type="search"
               className="header-search-input"
-              placeholder="Search public library…"
+              placeholder="Search public libraryâ¦"
               value={librarySearch}
               onChange={(e) => setLibrarySearch(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), goToLibrary())}
             />
-            <button type="button" className="header-search-button" onClick={goToLibrary}>
+            <button aria-label="Button" type="button" className="header-search-button" onClick={goToLibrary}>
               Search
             </button>
           </div>
           <div className="header-actions">
             {isLoggedIn ? (
               <>
-                <button
+                <button aria-label="Button"
                   type="button"
                   className="btn-header btn-header--link"
                   onClick={() => { setPlanError(null); setSaveError(null); navigate('plan-list'); }}
                 >
                   Plans
                 </button>
-                <button type="button" className="btn-header btn-header--link" onClick={handleGoToStudy}>
+                <button aria-label="Button" type="button" className="btn-header btn-header--link" onClick={handleGoToStudy}>
                   Study
                 </button>
-                <button
+                <button aria-label="Button"
                   type="button"
                   className="btn-header btn-header--link"
                   onClick={() => navigate('pricing')}
                 >
                   Pricing
                 </button>
-                <button type="button" className="btn-header btn-header--link" onClick={() => navigate('pomodoro')}>
+                <button aria-label="Button" type="button" className="btn-header btn-header--link" onClick={() => navigate('pomodoro')}>
                   Timer
                 </button>
-                <button type="button" className="btn-header btn-header--link" onClick={() => navigate('account')}>
+                <button aria-label="Button" type="button" className="btn-header btn-header--link" onClick={() => navigate('account')}>
                   Account
                 </button>
-                <button type="button" className="btn-header" onClick={() => signOut()}>
+                <button aria-label="Button" type="button" className="btn-header" onClick={() => signOut()}>
                   Log out
                 </button>
               </>
             ) : (
               <>
-                <button
+                <button aria-label="Button"
                   type="button"
                   className="btn-header btn-header--link"
                   onClick={() => navigate('pricing')}
                 >
                   Pricing
                 </button>
-                <button type="button" className="btn-header" onClick={openSignUp}>
+                <button aria-label="Button" type="button" className="btn-header" onClick={openSignUp}>
                   Sign up
                 </button>
-                <button type="button" className="btn-header btn-header--primary" onClick={openLogIn}>
+                <button aria-label="Button" type="button" className="btn-header btn-header--primary" onClick={openLogIn}>
                   Log in
                 </button>
               </>
@@ -515,7 +515,7 @@ function AppContent() {
         )}
         {effectiveView === 'plan' && (
           planLoading ? (
-            <div className="plan-loading">Loading your plan…</div>
+            <div className="plan-loading">Loading your planâ¦</div>
           ) : plan ? (
             <StudyPlan
               plan={plan}
@@ -528,8 +528,8 @@ function AppContent() {
             />
           ) : (
             <div className="plan-empty">
-              <p>You don’t have a saved plan yet.</p>
-              <button type="button" className="btn-header btn-header--primary" onClick={() => setView('form')}>
+              <p>You donât have a saved plan yet.</p>
+              <button aria-label="Button" type="button" className="btn-header btn-header--primary" onClick={() => setView('form')}>
                 Create a plan
               </button>
             </div>
