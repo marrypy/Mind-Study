@@ -61,7 +61,7 @@ export default function Sidebar({
             <ul className="sidebar-list">
               {foldersShow.map((folder) => (
                 <li key={folder.id}>
-                  <button
+                  <button aria-label="Button"
                     type="button"
                     className="sidebar-link"
                     onClick={() => onGoToFolder(folder)}
@@ -71,7 +71,7 @@ export default function Sidebar({
                 </li>
               ))}
               <li>
-                <button type="button" className="sidebar-link sidebar-link--show-all" onClick={onGoToStudy}>
+                <button aria-label="Button" type="button" className="sidebar-link sidebar-link--show-all" onClick={onGoToStudy}>
                   Show all folders
                 </button>
               </li>
@@ -87,7 +87,7 @@ export default function Sidebar({
             <ul className="sidebar-list">
               {recentShow.map((item) => (
                 <li key={`${item.type}-${item.id}`}>
-                  <button
+                  <button aria-label="Button"
                     type="button"
                     className="sidebar-link"
                     onClick={() => onGoToRecent(item)}
@@ -97,7 +97,7 @@ export default function Sidebar({
                 </li>
               ))}
               <li>
-                <button type="button" className="sidebar-link sidebar-link--show-all" onClick={onGoToStudy}>
+                <button aria-label="Button" type="button" className="sidebar-link sidebar-link--show-all" onClick={onGoToStudy}>
                   Show all recent
                 </button>
               </li>
@@ -110,14 +110,14 @@ export default function Sidebar({
           {!isLoggedIn ? (
             <p className="sidebar-empty">Log in to see plans</p>
           ) : plansLoading ? (
-            <p className="sidebar-empty">Loading…</p>
+            <p className="sidebar-empty">Loadingâ¦</p>
           ) : plans.length === 0 ? (
             <p className="sidebar-empty">No plans yet</p>
           ) : (
             <ul className="sidebar-list">
               {plansShow.map((row) => (
                 <li key={row.id}>
-                  <button
+                  <button aria-label="Button"
                     type="button"
                     className="sidebar-link"
                     onClick={() => onGoToPlan(row)}
@@ -127,7 +127,7 @@ export default function Sidebar({
                 </li>
               ))}
               <li>
-                <button type="button" className="sidebar-link sidebar-link--show-all" onClick={onGoToPlanList}>
+                <button aria-label="Button" type="button" className="sidebar-link sidebar-link--show-all" onClick={onGoToPlanList}>
                   Show all plans
                 </button>
               </li>
